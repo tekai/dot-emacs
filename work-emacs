@@ -1,0 +1,466 @@
+;; -*- mode: emacs-lisp -*-
+(setq-default inhibit-startup-message 't
+              tool-bar-mode nil
+              scroll-margin 0
+              scroll-preserve-screen-position nil
+              cursor-in-non-selected-windows nil)
+
+(setq default-frame-alist '((font-backend . "xft")
+                            (font . "DejaVu Sans Mono-10")
+                            ;; (font . "Inconsolata-14")
+                            (tool-bar-lines . 0)))
+
+;; no toolbar for me
+(tool-bar-mode -1)
+
+;; maximum font lock
+(global-font-lock-mode t)
+(setq font-lock-maximum-decoration t)
+
+;; Set Zmacs mode (highlight marked text)
+(transient-mark-mode t)
+
+;; parentheses
+(show-paren-mode t)
+(setq parens-require-spaces nil)
+
+;; Show Row and Column
+(line-number-mode t)
+(column-number-mode t)
+
+;; always make a backup~ (except for VCd files)
+(setq backup-inhibited nil)
+(setq make-backup-files t)
+
+;; no more "command attempted to use minibuffer while in minibuffer"
+(setq enable-recursive-minibuffers t)
+
+(require 'cl)
+;; custom keybindings
+(require 'hippie-exp)
+(global-set-key [C-tab] 'other-window)
+(global-set-key "\M-g" 'goto-line)      ;standard in xemacs but not in gnu-emacs
+(global-set-key "\M-E" 'hippie-expand) ; for the Mac
+(global-set-key [(super e)] 'hippie-expand)
+(global-set-key [(super s)] 'isearch-forward-regexp)
+(global-set-key [(hyper <)] 'end-of-buffer)
+(global-set-key [(super r)] (lambda () (interactive) (revert-buffer nil t)))
+(global-set-key [S-iso-lefttab] (lambda () (interactive) (let ((indent-tabs-mode t)) (insert-tab))))
+(global-set-key [C-tab] 'other-window)
+(global-set-key (kbd "C-c C-SPC") 'delete-horizontal-space)
+(global-set-key [(hyper .)] 'find-tag-other-window)
+(global-set-key [C-M-backspace] 'backward-kill-sexp) ; WARNING: by default this kills the X server!!
+(global-set-key (kbd "<f11>") (lambda ()
+                                (interactive)
+                                (async-shell-command (format "tkdiff `basename %s`" (buffer-file-name)) nil nil)))
+(global-set-key "[" 'insert-pair)
+(global-set-key "\"" 'insert-pair)
+(global-set-key "\M-'" 'insert-pair)
+(global-set-key "(" 'insert-parentheses)
+(global-set-key "\M-_" 'align-regexp)
+(global-set-key (kbd "<f9>") 'compile)
+
+
+;; M-% = query-replace
+;; M-& = query-replace-regexp
+(global-set-key "\M-&" 'query-replace-regexp)
+;; Non-nil means `query-replace' should preserve case in replacements.
+(setq case-replace nil)
+
+;;; Various indentation settings
+;; (setq-default c-basic-indent 4) ; useless?
+(setq-default c-basic-offset 4)
+(setq-default tab-width 4)
+(setq-default indent-tabs-mode nil)
+(setq-default tab-always-indent t)
+(setq-default truncate-lines nil)
+
+;; start server for emacsclient ()
+(server-start)
+(setq server-visit-hook 'raise-frame)
+(setq gnuserv-frame (selected-frame))
+
+;; if possible set window title to "emacs@<system>: /path/to/file"
+(defun title-with-path ()
+  ""
+  (if (or (eq window-system 'x)
+          (eq window-system 'mac)
+          (eq window-system 'w32))
+      (setq frame-title-format
+            (list "emacs@" system-name" : %f"))))
+
+;;; Angry keywords faces
+;;FIXME
+(setq font-lock-fixme-face (make-face 'font-lock-fixme-face))
+(set-face-foreground 'font-lock-fixme-face "Red")
+(set-face-background 'font-lock-fixme-face "Yellow")
+(font-lock-add-keywords
+			'php-mode
+			'(("\\<\\(FIXME\\)" 1 font-lock-fixme-face t)))
+(font-lock-add-keywords
+			'js2-mode
+			'(("\\<\\(FIXME\\)" 1 font-lock-fixme-face t)))
+
+;; TODO faces
+(setq font-lock-todo-face (make-face 'font-lock-todo-face))
+(set-face-foreground 'font-lock-todo-face "Blue")
+(set-face-background 'font-lock-todo-face "Yellow")
+(font-lock-add-keywords
+			'php-mode
+			'(("\\<\\(TODO\\)" 1 font-lock-todo-face t)))
+(font-lock-add-keywords
+			'js2-mode
+			'(("\\<\\(TODO\\)" 1 font-lock-todo-face t)))
+
+;; RED HACK
+(setq font-lock-hack-face (make-face 'font-lock-hack-face))
+(set-face-foreground 'font-lock-hack-face "White")
+(set-face-background 'font-lock-hack-face "Red")
+(font-lock-add-keywords
+			'php-mode
+			'(("\\<\\(HACK\\)" 1 font-lock-hack-face t)))
+(font-lock-add-keywords
+			'js2-mode
+			'(("\\<\\(HACK\\)" 1 font-lock-hack-face t)))
+
+;;; Set up load-path
+;; this is system specific!
+(add-to-list 'load-path "/home/engelke/emacs")
+(add-to-list 'load-path "/home/engelke/emacs/g-client")
+(add-to-list 'load-path "/home/engelke/emacs/slime/")
+
+
+;;; Set up major/minor-modes
+
+;;; Version Control & CVS
+;; status befehl aufrufen
+(global-set-key "\C-cv" 'cvs-status)
+;; Ignore most whitespace changes for diff
+;(setq vc-diff-switches (quote ("-w" "-B" "-u")))
+
+;;; Abbrev
+;; ensure abbrev mode is always on
+(setq-default abbrev-mode t)
+;; do not bug me about saving my abbreviations
+(setq save-abbrevs nil)
+
+(require 'hideshow)
+(add-to-list 'hs-special-modes-alist
+             '(php-mode "{" "}" "/[*/]" nil hs-c-like-adjust-block-beginning))
+(global-set-key [(super c)] 'hs-toggle-hiding)
+
+;;; C Modes
+(add-hook 'c-mode-common-hook
+          (lambda ()
+            (c-set-offset 'case-label '+)          ; case n: is indented
+            (c-set-offset 'substatement-open 0)
+            (c-set-offset 'cpp-macro 0)
+            (c-set-offset 'arglist-intro '+)))
+
+
+;;; PHP
+(require 'php-mode)
+(setq php-completion-file "/home/engelke/emacs/php-functions"
+      php-search-url "http://www.php.net/"
+      php-manual-url "http://samba.office/docs/php-manual-eng/")
+(define-key php-mode-map "'" 'insert-pair)
+(define-key php-mode-map "(" 'insert-parentheses)
+(define-key php-mode-map "\C-c\C-d" 'php-search-documentation)
+(define-key php-mode-map (kbd "<f10>") 'php-debug-file)
+(add-hook 'php-mode-hook 'hs-minor-mode)
+(add-hook 'php-mode-hook
+          '(lambda ()
+            (set (make-local-variable 'compile-command)
+             (let ((file (file-name-nondirectory buffer-file-name)))
+               (concat "php -l " file)))))
+
+;; Hide-Show
+(define-key hs-minor-mode-map (kbd "C-c q C-c") 'hs-toggle-hiding)
+(define-key hs-minor-mode-map (kbd "C-c q C-l") 'hs-hide-level)
+(define-key hs-minor-mode-map (kbd "C-c q C-M-s") 'hs-show-all)
+
+
+
+;;; Set up Slime
+(setq lisp-indent-function #'common-lisp-indent-function)
+;; ;; System specific!
+;; (setq common-lisp-hyperspec-root "file:///home/tekai/lisp/doc/HyperSpec/")
+(setq inferior-lisp-program "/home/engelke/ccl/lx86cl") ; your Lisp system
+(require 'slime)
+(slime-setup)
+;; (slime-autodoc-mode)
+;; (setq inferior-lisp-program "lisp")
+
+(autoload 'scheme-smart-complete "scheme-complete" nil t)
+(eval-after-load 'scheme
+  '(define-key scheme-mode-map "\e\t" 'scheme-complete-or-indent))
+
+;;; Javascript
+;; (add-to-list 'auto-mode-alist '("\\.js\\'" . javascript-mode))
+;; (autoload 'javascript-mode "javascript" nil t)
+;;  (autoload 'moz-minor-mode "moz" "Mozilla Minor and Inferior Mozilla Modes" t)
+;;  (defun javascript-custom-setup ()
+;;    (moz-minor-mode 1))
+;;  (add-hook 'javascript-mode-hook 'javascript-custom-setup)
+
+;; JS2 Mode by S. Yegge
+(autoload 'js2-mode "js2" nil t)
+(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+
+(require 'js-comint)
+(setq inferior-js-program-command "js -i")
+(add-hook 'js2-mode-hook
+          '(lambda ()
+            (local-set-key "\C-x\C-e" 'js-send-last-sexp)
+            (local-set-key "\C-\M-x" 'js-send-last-sexp-and-go)
+            (local-set-key "\C-cb" 'js-send-buffer)
+            (local-set-key "\C-c\C-b" 'js-send-buffer-and-go)
+            (local-set-key "\C-cl" 'js-load-file-and-go)
+            ;; ;; make emacs recognize the error format produced by jslint
+            (set (make-local-variable 'compilation-error-regexp-alist)
+             (list
+              (list "^Lint at line \\([0-9]+\\) character \\([0-9]+\\):[^\n]+\n\\([^\n]+\\)"  1 2 1 3)
+              (list "^jslint \\(.+\\)" 1 nil nil 0)))
+            ;;  '(("^\\([a-zA-Z.0-9_/-]+\\):\\([0-9]+\\):\\([0-9]+\\)" 1 2 3)))
+            (set (make-local-variable 'compile-command)
+             (let ((file (file-name-nondirectory buffer-file-name)))
+               (concat "jslint " file)))
+            ))
+
+(require 'js "js.el")
+;; (add-hook 'javascript-mode-hook 'js-mode)
+;; (autoload 'js-mode "js-mode" nil t)
+
+;;; CSS
+(add-to-list 'auto-mode-alist '("\\.css\\'" . css-mode))
+(autoload 'css-mode "css-mode" nil t)
+;; CSS Farben Färben ;; kann kein shorthand
+(defvar hexcolour-keywords
+  '(("#[abcdef[:digit:]]\\{6\\}"
+     (0 (put-text-property
+         (match-beginning 0)
+         (match-end 0)
+         'face (list :background
+                     (match-string-no-properties 0)))))))
+(defun hexcolour-add-to-font-lock ()
+  (font-lock-add-keywords nil hexcolour-keywords))
+(add-hook 'css-mode-hook 'hexcolour-add-to-font-lock)
+
+;;; browse in emacs
+(require 'w3m-load)
+(autoload 'w3m-browse-url "w3m" "Ask a WWW browser to show a URL." t)
+(setq browse-url-browser-function 'w3m-browse-url
+     browse-url-new-window-flag nil)
+
+;;; Google stuff
+;; (load-library "g")
+;; (setq g-user-email "@gmail.com")
+;; (setq g-curl-program "curl --proxy 10.0.0.1:3128")
+;; (setq g-html-handler 'browse-url-of-buffer)
+;; (setq browse-url-browser-function 'w3m-browse-url)
+;; (setq browse-url-browser-function 'browse-url-w3)
+
+;;; Very System-specific stuff
+;;; Mac
+;; option is meta here
+;; (setq mac-command-key-is-meta t)
+;; ;; open urls using the standard browser set by the system
+;; (setq browse-url-browser-function 'browse-url-generic
+;;       browse-url-generic-program "/usr/bin/open")
+
+;;; Wiki stuff
+(autoload 'wikipedia-mode "wikipedia-mode.el"
+  "Major mode for editing documents in Wikipedia markup." t)
+
+
+;;; Twitter.com
+;; (autoload 'twitter-get-friends-timeline "twitter" nil t)
+(autoload 'twitter-status-edit "twitter" nil t)
+;; (global-set-key "\C-xt" 'twitter-get-friends-timeline)
+(add-hook 'twitter-status-edit-mode-hook 'longlines-mode)
+
+;;; RFCview
+(add-to-list 'auto-mode-alist
+             '("/\\(rfc\\|std\\)[0-9]+\\.txt\\'" . rfcview-mode))
+(autoload 'rfcview-mode "rfcview" nil t)
+
+;; search with ack
+(autoload 'ack-same "full-ack" nil t)
+(autoload 'ack "full-ack" nil t)
+(autoload 'ack-find-same-file "full-ack" nil t)
+(autoload 'ack-find-file "full-ack" nil t)
+
+;;; My Own simple functions
+;;; aka kleine Helfer
+(defun kill-whitespace ()
+  "Kills whitespace at the end of a line in the buffer"
+  (interactive)
+  (push-mark)
+  (goto-char (point-min))
+  (replace-regexp "[ \t]+$" "")
+  (set-mark-command t)
+  (set-mark-command t))
+(global-set-key "\C-cw" 'kill-whitespace)
+
+(defun insert-curly (arg)
+  "Like insert-parenthesis, nah, it does indenting and doesn't move over
+ words but lines"
+  (interactive "P")
+  (if arg (setq arg (prefix-numeric-value arg))
+      (setq arg 0))
+  (cond ((> arg 0) (skip-chars-forward " \t"))
+        ((< arg 0) (forward-sexp arg) (setq arg (- arg))))
+  (insert "{")
+  (let ((point (point)))
+    (save-excursion
+      (or (eq arg 0) (forward-line (1+ arg)))
+      ;; (and (eq arg 0) (insert "\n"))
+      (insert "}\n")
+      (indent-region point (+ 1 (point)) nil)
+      (backward-char -2))))
+(global-set-key "\M-{" 'insert-curly)
+
+(defun toggle-line-comment ()
+  (interactive)
+  (save-excursion
+    (beginning-of-line)
+    (let ((beg (point)))
+      (end-of-line)
+      (comment-or-uncomment-region beg (point)))))
+(global-set-key [?\C-7] 'toggle-line-comment)
+
+(defun insert-buffer-name ()
+  (interactive)
+  (insert (buffer-name)))
+
+(defun insert-buffer-file-name ()
+  (interactive)
+  (insert (buffer-file-name)))
+
+;; erm something to read...
+(defun jargon ()
+  (interactive)
+  (find-file "~/doc/jargon-1.5.0.dos.txt"))
+
+;; nur vor find-tag, nicht vor find-tag-other-window
+(setq max-tags-depth 6)
+(defadvice find-tag (before find-tag-file-sw activate)
+  "Automatically search for tags in higher directories."
+  (let ((depth 0)
+        (file "TAGS"))
+    (while (and (< depth max-tags-depth)
+                (not (file-exists-p file)))
+      (setq file (concat "../" file))
+      (setq depth (+ depth 1)))
+    (when (file-exists-p file)
+      (visit-tags-table (file-truename file)))))
+(defadvice find-tag-other-window (before find-tag-file-ow activate)
+  "Automatically search for tags in higher directories."
+  (let ((depth 0)
+        (file "TAGS"))
+    (while (and (< depth max-tags-depth)
+                (not (file-exists-p file)))
+      (setq file (concat "../" file))
+      (setq depth (+ depth 1)))
+    (when (file-exists-p file)
+      (visit-tags-table (file-truename file)))))
+
+;; doesn't work
+;; (defadvice kill-ring-save (around interprogram-yank activate)
+;;   "if no region is selected add the contents of interprogram-paste to the kill ring"
+;;   (if (= (ad-get-arg 0) (ad-get-arg 1))
+;;       (kill-new (and interprogram-paste-function
+;;                      (funcall interprogram-paste-function)))
+;;       ad-do-it))
+
+;;; PHP debugger
+;;(load-file "/home/engelke/emacs/cedet/common/cedet.el")
+(autoload 'geben "geben" "PHP Debugger on Emacs" t)
+
+
+;;; Info setup
+(require 'info)
+(setq Info-directory-list (list "/home/engelke/Applications/emacs/info/"
+                                "/home/engelke/Applications/emacs/share/info/"
+                                "/usr/local/info"
+                                "/usr/share/info"
+                                "/usr/info"
+                                "/opt/gnome/share/info"
+                                ))
+;(setq Info-dir-contents nil) ;; to reset & reread info dirs
+;;; LOAD custom libraries
+(load-file "/home/engelke/emacs/my-js.el")
+(load-file "/home/engelke/git/tools/php.el")
+(load-file "/home/engelke/emacs/skeletons.el")
+(load-file "/home/engelke/emacs/epharmexx.el")
+(load-file "/home/engelke/emacs/project.el")
+
+;; execute in terminal voor beeter vizibility
+;; (defun term-colors ()
+;;   (interactive)
+;;   (custom-set-faces
+;;    '(default ((t (:background "black" :foreground "white" :slant normal :weight normal :height 90 :width normal :family "b&h-lucidatypewriter"))))
+;;    '(region ((t (:background "white" :foreground "black"))))))
+
+;; (defun normal-colors ()
+;;   (interactive)
+;;   (custom-set-faces
+;;    '(default ((t (:background "white" :foreground "black" :slant normal :weight normal :height 90 :width normal :family "lucidatypewriter"))))
+;;    '(region ((t (:background "black" :foreground "white"))))))
+
+;; (let ((font "LucidaTypewriter-12"))
+;;   (set-frame-font font)
+;;  (add-to-list 'default-frame-alist (cons 'font  font)))
+
+ ;; '(default ((t (:stipple nil :background "white" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 100 :width normal :foundry "misc" :family "fixed"))))
+
+;; (set-default-font "Bitstream Vera Sans Mono-10")
+;; (set-default-font "Deja Vu Sans Mono")
+;; (set-default-font "Monaco")
+
+;;; Stuff that emacs modifies herself
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(default ((t (:inherit nil :stipple nil :background "white" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 103 :width normal :foundry "unknown" :family "DejaVu Sans Mono"))))
+ '(font-lock-function-name-face ((((class color) (min-colors 88) (background light)) (:foreground "Blue1"))))
+ '(font-lock-keyword-face ((((class color) (min-colors 88) (background light)) (:foreground "Purple" :height 1.0))))
+ '(font-lock-string-face ((t (:foreground "Green4"))))
+ '(font-lock-variable-name-face ((((class color) (background light)) (:foreground "SteelBlue"))))
+ '(menu ((((type x-toolkit)) (:background "white" :foreground "black"))))
+ '(mode-line ((((type x w32 mac) (class color)) (:background "white" :foreground "black" :box (:line-width -1 :color "black")))))
+ '(mode-line-inactive ((t (:inherit mode-line :box (:line-width -1 :color "grey75")))))
+ '(region ((t (:background "black" :foreground "white")))))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(blink-cursor-mode nil)
+ '(column-number-mode t)
+ '(css-indent-level 2)
+ '(current-language-environment "Latin-9")
+ '(delete-selection-mode nil)
+ '(diff-switches (quote ("-u" "-w" "-B" "-b")))
+ '(fill-column 72)
+ '(grep-command "grep -nH -r -e ")
+ '(grep-template "grep <C> -nH -r -e <R> <F>")
+ '(inhibit-startup-screen nil)
+ '(js2-allow-keywords-as-property-names nil)
+ '(js2-highlight-level 3)
+ '(js2-use-font-lock-faces t)
+ '(keyboard-coding-system (quote iso-8859-1))
+ '(safe-local-variable-values (quote ((Syntax . COMMON-LISP) (Package . CL-USER) (Base . 10) (sql-product . mysql) (c-basic-indent . 4) (mule-coding . latin-9) (c-basic-indent . 2))))
+ '(scroll-bar-mode (quote right))
+ '(show-paren-mode t)
+ '(twitter-username "tekai")
+ '(w3m-no-proxy-domains (quote ("eeschner.local" "eeschner.office")))
+ '(w3m-use-cookies t)
+ '(w3m-use-favicon nil))
+
+(put 'narrow-to-region 'disabled nil)
+(put 'scroll-left 'disabled nil)
+(put 'upcase-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
