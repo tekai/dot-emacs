@@ -2,12 +2,13 @@
 (setq-default inhibit-startup-message 't
               tool-bar-mode nil
               scroll-margin 0
+              scroll-bar-mode (quote right)
               scroll-preserve-screen-position nil
               cursor-in-non-selected-windows nil)
 
 (setq default-frame-alist '((font-backend . "xft")
-                            (font . "DejaVu Sans Mono-10")
-                            ;; (font . "Inconsolata-14")
+                            ;; (font . "DejaVu Sans Mono-10")
+                            (font . "Inconsolata-12")
                             (tool-bar-lines . 0)))
 
 ;; no toolbar for me
@@ -179,7 +180,8 @@
 (define-key hs-minor-mode-map (kbd "C-c q C-l") 'hs-hide-level)
 (define-key hs-minor-mode-map (kbd "C-c q C-M-s") 'hs-show-all)
 
-
+;; org mode
+(add-hook 'org-mode-hook 'visual-line-mode)
 
 ;;; Set up Slime
 (setq lisp-indent-function #'common-lisp-indent-function)
@@ -377,6 +379,13 @@
 ;;(load-file "/home/engelke/emacs/cedet/common/cedet.el")
 (autoload 'geben "geben" "PHP Debugger on Emacs" t)
 
+;; sad fact, but cedet has no proper PHP support
+;; because it lacks a proper maintainer :(
+;; (require 'semantic)
+;; (require 'semantic/sb)
+;; (require 'srecode)
+;; (global-ede-mode 0)
+;; (semantic-mode 1)
 
 ;;; Info setup
 (require 'info)
