@@ -128,7 +128,8 @@
 ;; this is system specific!
 (add-to-list 'load-path "/home/engelke/emacs")
 (add-to-list 'load-path "/home/engelke/emacs/g-client")
-(add-to-list 'load-path "/home/engelke/emacs/slime/")
+(add-to-list 'load-path "/home/engelke/emacs/slime")
+(add-to-list 'load-path "/home/engelke/emacs/geben")
 
 
 ;;; Set up major/minor-modes
