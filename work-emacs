@@ -207,8 +207,12 @@
 ;;  (add-hook 'javascript-mode-hook 'javascript-custom-setup)
 
 ;; JS2 Mode by S. Yegge
-(autoload 'js2-mode "js2" nil t)
+;(autoload 'js2-mode "js2" nil t)
+(require 'js2-mode)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+;; js2-mode rebinds this to some debugging aid instead of mouse-set-point
+;; and thus C-s begins a region
+(define-key js2-mode-map [mouse-1] nil)
 
 (require 'js-comint)
 (setq inferior-js-program-command "js -i")
