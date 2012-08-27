@@ -183,6 +183,11 @@
 
 ;; org mode
 (add-hook 'org-mode-hook 'visual-line-mode)
+(defun org-summary-todo (n-done n-not-done)
+  "Switch entry to DONE when all subentries are done, to TODO otherwise."
+  (let (org-log-done org-log-states)   ; turn off logging
+    (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+(add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
 
 ;;; Set up Slime
 (setq lisp-indent-function #'common-lisp-indent-function)
@@ -207,12 +212,12 @@
 ;;  (add-hook 'javascript-mode-hook 'javascript-custom-setup)
 
 ;; JS2 Mode by S. Yegge
-;(autoload 'js2-mode "js2" nil t)
-(require 'js2-mode)
+(autoload 'js2-mode "js2" nil t)
+;; (require 'js2-mode)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 ;; js2-mode rebinds this to some debugging aid instead of mouse-set-point
 ;; and thus C-s begins a region
-(define-key js2-mode-map [mouse-1] nil)
+;;(define-key js2-mode-map [mouse-1] nil)
 
 (require 'js-comint)
 (setq inferior-js-program-command "js -i")
@@ -223,6 +228,7 @@
             (local-set-key "\C-cb" 'js-send-buffer)
             (local-set-key "\C-c\C-b" 'js-send-buffer-and-go)
             (local-set-key "\C-cl" 'js-load-file-and-go)
+            (local-set-key [mouse-1] nil)
             ;; ;; make emacs recognize the error format produced by jslint
             (set (make-local-variable 'compilation-error-regexp-alist)
              (list
@@ -344,6 +350,11 @@
   (interactive)
   (insert (buffer-file-name)))
 
+(defun kill-buffer-and-delete-frame ()
+  (interactive)
+  (when (kill-buffer)
+    (delete-frame)))
+(global-set-key (kbd "C-x 5 k") 'kill-buffer-and-delete-frame)
 ;; erm something to read...
 (defun jargon ()
   (interactive)
