@@ -51,9 +51,11 @@
 (global-set-key (kbd "C-c C-SPC") 'delete-horizontal-space)
 (global-set-key [(hyper .)] 'find-tag-other-window)
 (global-set-key [C-M-backspace] 'backward-kill-sexp) ; WARNING: by default this kills the X server!!
-(global-set-key (kbd "<f11>") (lambda ()
-                                (interactive)
-                                (async-shell-command (format "tkdiff `basename %s`" (buffer-file-name)) nil nil)))
+(global-set-key (kbd "<f11>")
+                (lambda ()
+                  (interactive)
+                  (when (buffer-file-name)
+                    (async-shell-command (format "tkdiff `basename %s`" (buffer-file-name)) nil nil))))
 (global-set-key "[" 'insert-pair)
 (global-set-key "\"" 'insert-pair)
 (global-set-key "\M-'" 'insert-pair)
@@ -126,10 +128,10 @@
 
 ;;; Set up load-path
 ;; this is system specific!
-(add-to-list 'load-path "/home/engelke/emacs")
-(add-to-list 'load-path "/home/engelke/emacs/g-client")
-(add-to-list 'load-path "/home/engelke/emacs/slime")
-(add-to-list 'load-path "/home/engelke/emacs/geben")
+(add-to-list 'load-path "/home/eeschner/emacs")
+(add-to-list 'load-path "/home/eeschner/emacs/g-client")
+(add-to-list 'load-path "/home/eeschner/emacs/slime")
+(add-to-list 'load-path "/home/eeschner/emacs/geben")
 
 
 ;;; Set up major/minor-modes
@@ -162,7 +164,7 @@
 
 ;;; PHP
 (require 'php-mode)
-(setq php-completion-file "/home/engelke/emacs/php-functions"
+(setq php-completion-file "/home/eeschner/emacs/php-functions"
       php-search-url "http://www.php.net/"
       php-manual-url "http://samba.office/docs/php-manual-eng/")
 (define-key php-mode-map "'" 'insert-pair)
@@ -170,6 +172,7 @@
 (define-key php-mode-map "\C-c\C-d" 'php-search-documentation)
 (define-key php-mode-map (kbd "<f10>") 'php-debug-file)
 (add-hook 'php-mode-hook 'hs-minor-mode)
+(add-hook 'python-mode-hook 'flycheck-mode)
 (add-hook 'php-mode-hook
           '(lambda ()
             (set (make-local-variable 'compile-command)
@@ -193,7 +196,7 @@
 (setq lisp-indent-function #'common-lisp-indent-function)
 ;; ;; System specific!
 ;; (setq common-lisp-hyperspec-root "file:///home/tekai/lisp/doc/HyperSpec/")
-(setq inferior-lisp-program "/home/engelke/ccl/lx86cl") ; your Lisp system
+(setq inferior-lisp-program "/home/eeschner/ccl/lx86cl") ; your Lisp system
 (require 'slime)
 (slime-setup)
 ;; (slime-autodoc-mode)
@@ -384,16 +387,21 @@
       (visit-tags-table (file-truename file)))))
 
 ;; doesn't work
+;; (x-get-selection 'PRIMARY)
+;; (or (x-get-selection-value)
+;;     (x-get-selection 'PRIMARY))
+;; (x-get-selection-value
 ;; (defadvice kill-ring-save (around interprogram-yank activate)
-;;   "if no region is selected add the contents of interprogram-paste to the kill ring"
+;;   "if no region is selected add the contents of the selection to the kill ring"
 ;;   (if (= (ad-get-arg 0) (ad-get-arg 1))
 ;;       (kill-new (and interprogram-paste-function
 ;;                      (funcall interprogram-paste-function)))
 ;;       ad-do-it))
 
 ;;; PHP debugger
-;;(load-file "/home/engelke/emacs/cedet/common/cedet.el")
+;;(load-file "/home/eeschner/emacs/cedet/common/cedet.el")
 (autoload 'geben "geben" "PHP Debugger on Emacs" t)
+(setq geben-source-coding-system 'latin-9)
 
 ;; sad fact, but cedet has no proper PHP support
 ;; because it lacks a proper maintainer :(
@@ -405,8 +413,8 @@
 
 ;;; Info setup
 (require 'info)
-(setq Info-directory-list (list "/home/engelke/Applications/emacs/info/"
-                                "/home/engelke/Applications/emacs/share/info/"
+(setq Info-directory-list (list "/home/eeschner/Applications/emacs/info/"
+                                "/home/eeschner/Applications/emacs/share/info/"
                                 "/usr/local/info"
                                 "/usr/share/info"
                                 "/usr/info"
@@ -414,11 +422,11 @@
                                 ))
 ;(setq Info-dir-contents nil) ;; to reset & reread info dirs
 ;;; LOAD custom libraries
-(load-file "/home/engelke/emacs/my-js.el")
-(load-file "/home/engelke/git/tools/php.el")
-(load-file "/home/engelke/emacs/skeletons.el")
-(load-file "/home/engelke/emacs/epharmexx.el")
-(load-file "/home/engelke/emacs/project.el")
+(load-file "/home/eeschner/emacs/my-js.el")
+(load-file "/home/eeschner/git/tools/php.el")
+(load-file "/home/eeschner/emacs/skeletons.el")
+(load-file "/home/eeschner/emacs/epharmexx.el")
+(load-file "/home/eeschner/emacs/project.el")
 
 ;; execute in terminal voor beeter vizibility
 ;; (defun term-colors ()
