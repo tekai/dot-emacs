@@ -130,7 +130,6 @@
 ;; this is system specific!
 (add-to-list 'load-path "/home/eeschner/emacs")
 (add-to-list 'load-path "/home/eeschner/emacs/g-client")
-(add-to-list 'load-path "/home/eeschner/emacs/slime")
 (add-to-list 'load-path "/home/eeschner/emacs/geben")
 
 
@@ -191,14 +190,26 @@
   (let (org-log-done org-log-states)   ; turn off logging
     (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
 (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+(setq org-fontify-done-headline t)
+(custom-set-faces
+ '(org-done ((t (:foreground "ForestGreen"   
+                 :weight normal
+                 :strike-through t))))
+ '(org-headline-done 
+            ((t 
+               (:foreground "SaddleBrown" :strike-through t)))))
+
+
+(require 'http-twiddle)
+
 
 ;;; Set up Slime
 (setq lisp-indent-function #'common-lisp-indent-function)
 ;; ;; System specific!
 ;; (setq common-lisp-hyperspec-root "file:///home/tekai/lisp/doc/HyperSpec/")
-(setq inferior-lisp-program "/home/eeschner/ccl/lx86cl") ; your Lisp system
-(require 'slime)
-(slime-setup)
+;; (setq inferior-lisp-program "/home/eeschner/ccl/lx86cl") ; your Lisp system
+;; (require 'slime)
+;; (slime-setup)
 ;; (slime-autodoc-mode)
 ;; (setq inferior-lisp-program "lisp")
 
@@ -248,8 +259,8 @@
 ;; (autoload 'js-mode "js-mode" nil t)
 
 ;;; CSS
-(add-to-list 'auto-mode-alist '("\\.css\\'" . css-mode))
-(autoload 'css-mode "css-mode" nil t)
+;; (add-to-list 'auto-mode-alist '("\\.css\\'" . css-mode))
+;; (autoload 'css-mode "css-mode" nil t)
 ;; CSS Farben Färben ;; kann kein shorthand
 (defvar hexcolour-keywords
   '(("#[abcdef[:digit:]]\\{6\\}"
@@ -260,7 +271,7 @@
                      (match-string-no-properties 0)))))))
 (defun hexcolour-add-to-font-lock ()
   (font-lock-add-keywords nil hexcolour-keywords))
-(add-hook 'css-mode-hook 'hexcolour-add-to-font-lock)
+;; (add-hook 'css-mode-hook 'hexcolour-add-to-font-lock)
 
 ;;; browse in emacs
 (require 'w3m-load)
@@ -474,6 +485,7 @@
  '(blink-cursor-mode nil)
  '(column-number-mode t)
  '(css-indent-level 2)
+ '(css-indent-offset 2)
  '(current-language-environment "Latin-9")
  '(delete-selection-mode nil)
  '(diff-switches (quote ("-u" "-w" "-B" "-b")))
