@@ -42,6 +42,7 @@
 (global-set-key [C-tab] 'other-window)
 (global-set-key "\M-g" 'goto-line)      ;standard in xemacs but not in gnu-emacs
 (global-set-key "\M-E" 'hippie-expand) ; for the Mac
+(global-set-key "\C-cf" 'ack)
 (global-set-key [(super e)] 'hippie-expand)
 (global-set-key [(super s)] 'isearch-forward-regexp)
 (global-set-key [(hyper <)] 'end-of-buffer)
@@ -191,14 +192,13 @@
     (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
 (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
 (setq org-fontify-done-headline t)
-(custom-set-faces
- '(org-done ((t (:foreground "ForestGreen"   
-                 :weight normal
-                 :strike-through t))))
- '(org-headline-done 
-            ((t 
-               (:foreground "SaddleBrown" :strike-through t)))))
-
+(setq org-enforce-todo-dependencies t)
+(setq org-agenda-todo-list-sublevels nil) ; only top-level todos in agenda
+(setq org-log-done 'time)
+(global-set-key "\C-ca" 'org-agenda)
+(let ((local-org-settings "~/emacs/org-agenda-files"))
+(when (file-exists-p local-org-settings)
+  (load local-org-settings)))
 
 (require 'http-twiddle)
 
@@ -324,7 +324,9 @@
   (interactive)
   (push-mark)
   (goto-char (point-min))
-  (replace-regexp "[ \t]+$" "")
+  (if (= 0 (coding-system-eol-type buffer-file-coding-system))
+      (replace-regexp "[ \t\r]+$" "") ; eliminate CR in unix files
+      (replace-regexp "[ \t]+$" ""))
   (set-mark-command t)
   (set-mark-command t))
 (global-set-key "\C-cw" 'kill-whitespace)
@@ -463,6 +465,7 @@
 ;; (set-default-font "Monaco")
 
 ;;; Stuff that emacs modifies herself
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -476,7 +479,10 @@
  '(menu ((((type x-toolkit)) (:background "white" :foreground "black"))))
  '(mode-line ((((type x w32 mac) (class color)) (:background "white" :foreground "black" :box (:line-width -1 :color "black")))))
  '(mode-line-inactive ((t (:inherit mode-line :box (:line-width -1 :color "grey75")))))
+ '(org-done ((t (:foreground "ForestGreen" :weight normal :strike-through t))))
+ '(org-headline-done ((t (:foreground "SaddleBrown" :strike-through t))))
  '(region ((t (:background "black" :foreground "white")))))
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
