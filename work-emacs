@@ -196,9 +196,9 @@
 (setq org-agenda-todo-list-sublevels nil) ; only top-level todos in agenda
 (setq org-log-done 'time)
 (global-set-key "\C-ca" 'org-agenda)
-(let ((local-org-settings "~/emacs/org-agenda-files"))
-(when (file-exists-p local-org-settings)
-  (load local-org-settings)))
+(let ((local-org-settings "~/emacs/org-agenda-files.el"))
+  (when (file-exists-p local-org-settings)
+    (load local-org-settings)))
 
 (require 'http-twiddle)
 
