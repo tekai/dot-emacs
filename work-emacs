@@ -99,33 +99,33 @@
 (set-face-foreground 'font-lock-fixme-face "Red")
 (set-face-background 'font-lock-fixme-face "Yellow")
 (font-lock-add-keywords
-			'php-mode
-			'(("\\<\\(FIXME\\)" 1 font-lock-fixme-face t)))
+            'php-mode
+            '(("\\<\\(FIXME\\)" 1 font-lock-fixme-face t)))
 (font-lock-add-keywords
-			'js2-mode
-			'(("\\<\\(FIXME\\)" 1 font-lock-fixme-face t)))
+            'js2-mode
+            '(("\\<\\(FIXME\\)" 1 font-lock-fixme-face t)))
 
 ;; TODO faces
 (setq font-lock-todo-face (make-face 'font-lock-todo-face))
 (set-face-foreground 'font-lock-todo-face "Blue")
 (set-face-background 'font-lock-todo-face "Yellow")
 (font-lock-add-keywords
-			'php-mode
-			'(("\\<\\(TODO\\)" 1 font-lock-todo-face t)))
+            'php-mode
+            '(("\\<\\(TODO\\)" 1 font-lock-todo-face t)))
 (font-lock-add-keywords
-			'js2-mode
-			'(("\\<\\(TODO\\)" 1 font-lock-todo-face t)))
+            'js2-mode
+            '(("\\<\\(TODO\\)" 1 font-lock-todo-face t)))
 
 ;; RED HACK
 (setq font-lock-hack-face (make-face 'font-lock-hack-face))
 (set-face-foreground 'font-lock-hack-face "White")
 (set-face-background 'font-lock-hack-face "Red")
 (font-lock-add-keywords
-			'php-mode
-			'(("\\<\\(HACK\\)" 1 font-lock-hack-face t)))
+            'php-mode
+            '(("\\<\\(HACK\\)" 1 font-lock-hack-face t)))
 (font-lock-add-keywords
-			'js2-mode
-			'(("\\<\\(HACK\\)" 1 font-lock-hack-face t)))
+            'js2-mode
+            '(("\\<\\(HACK\\)" 1 font-lock-hack-face t)))
 
 ;;; Set up load-path
 ;; this is system specific!
@@ -213,21 +213,13 @@
 ;; (slime-autodoc-mode)
 ;; (setq inferior-lisp-program "lisp")
 
-(autoload 'scheme-smart-complete "scheme-complete" nil t)
-(eval-after-load 'scheme
-  '(define-key scheme-mode-map "\e\t" 'scheme-complete-or-indent))
+;; (autoload 'scheme-smart-complete "scheme-complete" nil t)
+;; (eval-after-load 'scheme
+;;   '(define-key scheme-mode-map "\e\t" 'scheme-complete-or-indent))
 
-;;; Javascript
-;; (add-to-list 'auto-mode-alist '("\\.js\\'" . javascript-mode))
-;; (autoload 'javascript-mode "javascript" nil t)
-;;  (autoload 'moz-minor-mode "moz" "Mozilla Minor and Inferior Mozilla Modes" t)
-;;  (defun javascript-custom-setup ()
-;;    (moz-minor-mode 1))
-;;  (add-hook 'javascript-mode-hook 'javascript-custom-setup)
 
 ;; JS2 Mode by S. Yegge
 (autoload 'js2-mode "js2" nil t)
-;; (require 'js2-mode)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 ;; js2-mode rebinds this to some debugging aid instead of mouse-set-point
 ;; and thus C-s begins a region
@@ -253,25 +245,7 @@
              (let ((file (file-name-nondirectory buffer-file-name)))
                (concat "jslint " file)))
             ))
-
 (require 'js "js.el")
-;; (add-hook 'javascript-mode-hook 'js-mode)
-;; (autoload 'js-mode "js-mode" nil t)
-
-;;; CSS
-;; (add-to-list 'auto-mode-alist '("\\.css\\'" . css-mode))
-;; (autoload 'css-mode "css-mode" nil t)
-;; CSS Farben Färben ;; kann kein shorthand
-(defvar hexcolour-keywords
-  '(("#[abcdef[:digit:]]\\{6\\}"
-     (0 (put-text-property
-         (match-beginning 0)
-         (match-end 0)
-         'face (list :background
-                     (match-string-no-properties 0)))))))
-(defun hexcolour-add-to-font-lock ()
-  (font-lock-add-keywords nil hexcolour-keywords))
-;; (add-hook 'css-mode-hook 'hexcolour-add-to-font-lock)
 
 ;;; browse in emacs
 (require 'w3m-load)
@@ -279,32 +253,9 @@
 (setq browse-url-browser-function 'w3m-browse-url
      browse-url-new-window-flag nil)
 
-;;; Google stuff
-;; (load-library "g")
-;; (setq g-user-email "@gmail.com")
-;; (setq g-curl-program "curl --proxy 10.0.0.1:3128")
-;; (setq g-html-handler 'browse-url-of-buffer)
-;; (setq browse-url-browser-function 'w3m-browse-url)
-;; (setq browse-url-browser-function 'browse-url-w3)
-
-;;; Very System-specific stuff
-;;; Mac
-;; option is meta here
-;; (setq mac-command-key-is-meta t)
-;; ;; open urls using the standard browser set by the system
-;; (setq browse-url-browser-function 'browse-url-generic
-;;       browse-url-generic-program "/usr/bin/open")
-
 ;;; Wiki stuff
 (autoload 'wikipedia-mode "wikipedia-mode.el"
   "Major mode for editing documents in Wikipedia markup." t)
-
-
-;;; Twitter.com
-;; (autoload 'twitter-get-friends-timeline "twitter" nil t)
-(autoload 'twitter-status-edit "twitter" nil t)
-;; (global-set-key "\C-xt" 'twitter-get-friends-timeline)
-(add-hook 'twitter-status-edit-mode-hook 'longlines-mode)
 
 ;;; RFCview
 (add-to-list 'auto-mode-alist
