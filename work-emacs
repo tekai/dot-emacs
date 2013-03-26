@@ -72,7 +72,6 @@
 (setq case-replace nil)
 
 ;;; Various indentation settings
-;; (setq-default c-basic-indent 4) ; useless?
 (setq-default c-basic-offset 4)
 (setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)
@@ -80,18 +79,19 @@
 (setq-default truncate-lines nil)
 
 ;; start server for emacsclient ()
-(server-start)
+;; (server-start)
 (setq server-visit-hook 'raise-frame)
 (setq gnuserv-frame (selected-frame))
 
-;; if possible set window title to "emacs@<system>: /path/to/file"
 (defun title-with-path ()
-  ""
-  (if (or (eq window-system 'x)
+  "if possible set window title to \"emacs@<system>: /path/to/file\""
+  (when (or (eq window-system 'x)
           (eq window-system 'mac)
           (eq window-system 'w32))
       (setq frame-title-format
-            (list "emacs@" system-name" : %f"))))
+            '(:eval (if buffer-file-name
+                       (list "emacs@" system-name " : %f")
+                       "emacs : %b")))))
 
 ;;; Angry keywords faces
 ;;FIXME
@@ -99,33 +99,27 @@
 (set-face-foreground 'font-lock-fixme-face "Red")
 (set-face-background 'font-lock-fixme-face "Yellow")
 (font-lock-add-keywords
-            'php-mode
-            '(("\\<\\(FIXME\\)" 1 font-lock-fixme-face t)))
+     'php-mode '(("\\<\\(FIXME\\)" 1 font-lock-fixme-face t)))
 (font-lock-add-keywords
-            'js2-mode
-            '(("\\<\\(FIXME\\)" 1 font-lock-fixme-face t)))
+     'js2-mode '(("\\<\\(FIXME\\)" 1 font-lock-fixme-face t)))
 
 ;; TODO faces
 (setq font-lock-todo-face (make-face 'font-lock-todo-face))
 (set-face-foreground 'font-lock-todo-face "Blue")
 (set-face-background 'font-lock-todo-face "Yellow")
 (font-lock-add-keywords
-            'php-mode
-            '(("\\<\\(TODO\\)" 1 font-lock-todo-face t)))
+    'php-mode '(("\\<\\(TODO\\)" 1 font-lock-todo-face t)))
 (font-lock-add-keywords
-            'js2-mode
-            '(("\\<\\(TODO\\)" 1 font-lock-todo-face t)))
+    'js2-mode '(("\\<\\(TODO\\)" 1 font-lock-todo-face t)))
 
 ;; RED HACK
 (setq font-lock-hack-face (make-face 'font-lock-hack-face))
 (set-face-foreground 'font-lock-hack-face "White")
 (set-face-background 'font-lock-hack-face "Red")
 (font-lock-add-keywords
-            'php-mode
-            '(("\\<\\(HACK\\)" 1 font-lock-hack-face t)))
+    'php-mode '(("\\<\\(HACK\\)" 1 font-lock-hack-face t)))
 (font-lock-add-keywords
-            'js2-mode
-            '(("\\<\\(HACK\\)" 1 font-lock-hack-face t)))
+    'js2-mode '(("\\<\\(HACK\\)" 1 font-lock-hack-face t)))
 
 ;;; Set up load-path
 ;; this is system specific!
@@ -179,6 +173,10 @@
              (let ((file (file-name-nondirectory buffer-file-name)))
                (concat "php -l " file)))))
 
+(setq sql-product 'mysql)
+(add-hook 'sql-mode-hook
+          (lambda ()
+            (sql-highlight-mysql-keywords)))
 ;; Hide-Show
 (define-key hs-minor-mode-map (kbd "C-c q C-c") 'hs-toggle-hiding)
 (define-key hs-minor-mode-map (kbd "C-c q C-l") 'hs-hide-level)
@@ -367,6 +365,17 @@
 (autoload 'geben "geben" "PHP Debugger on Emacs" t)
 (setq geben-source-coding-system 'latin-9)
 
+
+;;; eldoc
+(require 'php-eldoc)
+(defun php-mode-options ()
+  (php-eldoc-enable)
+  (php-eldoc-probe-load "http://eeschner.office/probe.php?secret=sesameCracker"))
+    ;; ((string-match-p "^/other-project-folder")
+    ;;  (php-eldoc-probe-load "http://localhost/otherproject/probe.php?secret=sesame"))))
+(add-hook 'php-mode-hook 'php-mode-options)
+(add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
+
 ;; sad fact, but cedet has no proper PHP support
 ;; because it lacks a proper maintainer :(
 ;; (require 'semantic)
@@ -391,6 +400,9 @@
 (load-file "/home/eeschner/emacs/skeletons.el")
 (load-file "/home/eeschner/emacs/epharmexx.el")
 (load-file "/home/eeschner/emacs/project.el")
+(let ((host-file (format "/home/eeschner/emacs/%s.el" system-name)))
+  (when (file-exists-p host-file)
+      (load-file host-file)))
 
 ;; execute in terminal voor beeter vizibility
 ;; (defun term-colors ()
