@@ -11,8 +11,9 @@
                             (font . "Inconsolata-12")
                             (tool-bar-lines . 0)))
 
-;; no toolbar for me
+;; no toolbar, no menu for me
 (tool-bar-mode -1)
+(menu-bar-mode -1)
 
 ;; maximum font lock
 (global-font-lock-mode t)
@@ -40,6 +41,7 @@
 ;; custom keybindings
 (require 'hippie-exp)
 (global-set-key [C-tab] 'other-window)
+(global-set-key (kbd "C-x O") (lambda () (interactive) (other-window -1)))
 (global-set-key "\M-g" 'goto-line)      ;standard in xemacs but not in gnu-emacs
 (global-set-key "\M-E" 'hippie-expand) ; for the Mac
 (global-set-key "\C-cf" 'ack)
@@ -130,6 +132,9 @@
 
 ;;; Set up major/minor-modes
 
+;;; Tramp
+(setq tramp-default-method "ssh")
+
 ;;; Version Control & CVS
 ;; status befehl aufrufen
 (global-set-key "\C-cv" 'cvs-status)
@@ -183,6 +188,7 @@
 (define-key hs-minor-mode-map (kbd "C-c q C-M-s") 'hs-show-all)
 
 ;; org mode
+(require 'org)
 (add-hook 'org-mode-hook 'visual-line-mode)
 (defun org-summary-todo (n-done n-not-done)
   "Switch entry to DONE when all subentries are done, to TODO otherwise."
@@ -193,16 +199,20 @@
 (setq org-enforce-todo-dependencies t)
 (setq org-agenda-todo-list-sublevels nil) ; only top-level todos in agenda
 (setq org-log-done 'time)
+(define-key org-mode-map (kbd "<mouse-6>") 'outline-previous-visible-heading)
+(define-key org-mode-map (kbd "<mouse-7>") 'outline-next-visible-heading)
+(define-key org-mode-map (kbd "C-<mouse-6>") 'outline-up-heading)
 (global-set-key "\C-ca" 'org-agenda)
-(let ((local-org-settings "~/emacs/org-agenda-files.el"))
-  (when (file-exists-p local-org-settings)
-    (load local-org-settings)))
 
 (require 'http-twiddle)
 
 
 ;;; Set up Slime
 (setq lisp-indent-function #'common-lisp-indent-function)
+(load (expand-file-name "~/quicklisp/slime-helper.el"))
+;; Replace "sbcl" with the path to your implementation
+(setq inferior-lisp-program "clozure-cl")
+
 ;; ;; System specific!
 ;; (setq common-lisp-hyperspec-root "file:///home/tekai/lisp/doc/HyperSpec/")
 ;; (setq inferior-lisp-program "/home/eeschner/ccl/lx86cl") ; your Lisp system
@@ -265,6 +275,12 @@
 (autoload 'ack "full-ack" nil t)
 (autoload 'ack-find-same-file "full-ack" nil t)
 (autoload 'ack-find-file "full-ack" nil t)
+
+;; LUA
+(autoload 'lua-mode "lua-mode" "Lua editing mode." t)
+(add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
+(add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
+(setq lua-indent-level 2) ; because that's easier ingame
 
 ;;; My Own simple functions
 ;;; aka kleine Helfer
@@ -366,16 +382,6 @@
 (setq geben-source-coding-system 'latin-9)
 
 
-;;; eldoc
-(require 'php-eldoc)
-(defun php-mode-options ()
-  (php-eldoc-enable)
-  (php-eldoc-probe-load "http://eeschner.office/probe.php?secret=sesameCracker"))
-    ;; ((string-match-p "^/other-project-folder")
-    ;;  (php-eldoc-probe-load "http://localhost/otherproject/probe.php?secret=sesame"))))
-(add-hook 'php-mode-hook 'php-mode-options)
-(add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
-
 ;; sad fact, but cedet has no proper PHP support
 ;; because it lacks a proper maintainer :(
 ;; (require 'semantic)
@@ -399,11 +405,11 @@
 (load-file "/home/eeschner/git/tools/php.el")
 (load-file "/home/eeschner/emacs/skeletons.el")
 (load-file "/home/eeschner/emacs/epharmexx.el")
-(load-file "/home/eeschner/emacs/project.el")
 (let ((host-file (format "/home/eeschner/emacs/%s.el" system-name)))
   (when (file-exists-p host-file)
       (load-file host-file)))
 
+(require 'projekt)
 ;; execute in terminal voor beeter vizibility
 ;; (defun term-colors ()
 ;;   (interactive)
