@@ -158,7 +158,9 @@
             (c-set-offset 'case-label '+)          ; case n: is indented
             (c-set-offset 'substatement-open 0)
             (c-set-offset 'cpp-macro 0)
-            (c-set-offset 'arglist-intro '+)))
+            (c-set-offset 'arglist-intro '+)
+            ;; funktion um else/if ( => ++, sonst => + zu erwirken
+            (c-set-offset 'arglist-cont-nonempty '+)))
 
 
 ;;; PHP
@@ -170,14 +172,18 @@
 (define-key php-mode-map "(" 'insert-parentheses)
 (define-key php-mode-map "\C-c\C-d" 'php-search-documentation)
 (define-key php-mode-map (kbd "<f10>") 'php-debug-file)
-(add-hook 'php-mode-hook 'hs-minor-mode)
-(add-hook 'python-mode-hook 'flycheck-mode)
+(define-key php-mode-map [f3] 'flymake-display-err-menu-for-current-line)
+(define-key php-mode-map [f4] 'flymake-goto-next-error)
+(define-key php-mode-map [f12] 'php-check-syntax-and-goto-line)
 (add-hook 'php-mode-hook
           '(lambda ()
+            (hs-minor-mode 1)
+            ;(flymake-mode 1) ; will nicht mit geben
             (set (make-local-variable 'compile-command)
              (let ((file (file-name-nondirectory buffer-file-name)))
                (concat "php -l " file)))))
 
+;; SQL Mode
 (setq sql-product 'mysql)
 (add-hook 'sql-mode-hook
           (lambda ()
@@ -203,6 +209,36 @@
 (define-key org-mode-map (kbd "<mouse-7>") 'outline-next-visible-heading)
 (define-key org-mode-map (kbd "C-<mouse-6>") 'outline-up-heading)
 (global-set-key "\C-ca" 'org-agenda)
+(global-set-key "\C-cl" 'org-store-link)
+
+;; Org LaTeX setup
+(setq org-latex-default-packages-alist
+      '(("" "fontspec" t)
+        ("" "xunicode" t)
+        ("" "url" t)
+        ("xetex,hidelinks" "hyperref" nil) ; hidelinks not in this version
+        ("" "fixltx2e" nil)
+        ("" "graphicx" t)
+        ("" "longtable" nil)
+        ("" "float" nil)
+        ("" "wrapfig" nil)
+        ("" "soul" t)
+        ("babel" "csquotes" t)
+        "\\tolerance=1000"))
+(setq org-latex-pdf-process '("latexmk -xelatex -bibtex-cond -f %f" "latexmk -xelatex -bibtex-cond -f -c %f"))
+
+(defun my-rtcite-export-handler (path desc format)
+  "Export handler for rtcite:<bib file>::<cite> links"
+  (let* ((search (when (string-match "::#?\\(.+\\)\\'" path)
+                   (match-string 1 path)))
+         (path (substring path 0 (match-beginning 0))))
+    (cond ((eq format 'latex)
+           (if (or (not desc)
+                   (equal 0 (search "rtcite:" desc)))
+               (format "\\cite{%s}" search)
+             (format "\\cite[%s]{%s}" desc search))))))
+(org-add-link-type "rtcite" nil 'my-rtcite-export-handler)
+
 
 (require 'http-twiddle)
 
@@ -259,7 +295,7 @@
 (require 'w3m-load)
 (autoload 'w3m-browse-url "w3m" "Ask a WWW browser to show a URL." t)
 (setq browse-url-browser-function 'w3m-browse-url
-     browse-url-new-window-flag nil)
+      browse-url-new-window-flag nil)
 
 ;;; Wiki stuff
 (autoload 'wikipedia-mode "wikipedia-mode.el"
@@ -270,7 +306,7 @@
              '("/\\(rfc\\|std\\)[0-9]+\\.txt\\'" . rfcview-mode))
 (autoload 'rfcview-mode "rfcview" nil t)
 
-;; search with ack
+;; Search with ack
 (autoload 'ack-same "full-ack" nil t)
 (autoload 'ack "full-ack" nil t)
 (autoload 'ack-find-same-file "full-ack" nil t)
@@ -282,8 +318,12 @@
 (add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
 (setq lua-indent-level 2) ; because that's easier ingame
 
-;;; My Own simple functions
-;;; aka kleine Helfer
+;; TeX
+(setq tex-run-command "xetex")
+(setq latex-run-command "xelatex")
+
+;;; My own simple functions
+;;; aka kleine Helferlein
 (defun kill-whitespace ()
   "Kills whitespace at the end of a line in the buffer"
   (interactive)
@@ -410,6 +450,10 @@
       (load-file host-file)))
 
 (require 'projekt)
+
+;; magit
+(autoload 'magit-status "magit" nil t)
+
 ;; execute in terminal voor beeter vizibility
 ;; (defun term-colors ()
 ;;   (interactive)
