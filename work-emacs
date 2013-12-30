@@ -50,7 +50,6 @@
 (global-set-key [(hyper <)] 'end-of-buffer)
 (global-set-key [(super r)] (lambda () (interactive) (revert-buffer nil t)))
 (global-set-key [S-iso-lefttab] (lambda () (interactive) (let ((indent-tabs-mode t)) (insert-tab))))
-(global-set-key [C-tab] 'other-window)
 (global-set-key (kbd "C-c C-SPC") 'delete-horizontal-space)
 (global-set-key [(hyper .)] 'find-tag-other-window)
 (global-set-key [C-M-backspace] 'backward-kill-sexp) ; WARNING: by default this kills the X server!!
@@ -86,7 +85,7 @@
 (setq gnuserv-frame (selected-frame))
 
 (defun title-with-path ()
-  "if possible set window title to \"emacs@<system>: /path/to/file\""
+  "If possible set window title to \"emacs@<system>: /path/to/file\""
   (when (or (eq window-system 'x)
           (eq window-system 'mac)
           (eq window-system 'w32))
@@ -94,6 +93,11 @@
             '(:eval (if buffer-file-name
                        (list "emacs@" system-name " : %f")
                        "emacs : %b")))))
+
+;; change buffer naming strategy from file<2> to file:dir/dir
+(require 'uniquify)
+(setq uniquify-buffer-name-style 'post-forward
+      uniquify-separator ":")
 
 ;;; Angry keywords faces
 ;;FIXME
@@ -223,6 +227,7 @@
         ("" "float" nil)
         ("" "wrapfig" nil)
         ("" "soul" t)
+        ("" "changes" t)
         ("babel" "csquotes" t)
         "\\tolerance=1000"))
 (setq org-latex-pdf-process '("latexmk -xelatex -bibtex-cond -f %f" "latexmk -xelatex -bibtex-cond -f -c %f"))
@@ -484,7 +489,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :background "white" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 103 :width normal :foundry "unknown" :family "DejaVu Sans Mono"))))
+ '(default ((t (:inherit nil :stipple nil :background "white" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "unknown" :family "Inconsolata"))))
  '(font-lock-function-name-face ((((class color) (min-colors 88) (background light)) (:foreground "Blue1"))))
  '(font-lock-keyword-face ((((class color) (min-colors 88) (background light)) (:foreground "Purple" :height 1.0))))
  '(font-lock-string-face ((t (:foreground "Green4"))))
