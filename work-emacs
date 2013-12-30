@@ -499,7 +499,8 @@
  '(mode-line-inactive ((t (:inherit mode-line :box (:line-width -1 :color "grey75")))))
  '(org-done ((t (:foreground "ForestGreen" :weight normal :strike-through t))))
  '(org-headline-done ((t (:foreground "SaddleBrown" :strike-through t))))
- '(region ((t (:background "black" :foreground "white")))))
+ '(region ((t (:background "black" :foreground "white"))))
+ '(variable-pitch ((t (:height 0.8 :family "Droid Sans")))))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
