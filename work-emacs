@@ -450,7 +450,7 @@
 (load-file "/home/eeschner/git/tools/php.el")
 (load-file "/home/eeschner/emacs/skeletons.el")
 (load-file "/home/eeschner/emacs/epharmexx.el")
-(let ((host-file (format "/home/eeschner/emacs/%s.el" system-name)))
+(let ((host-file (format "~/.emacs.d/%s.el" system-name)))
   (when (file-exists-p host-file)
       (load-file host-file)))
 
