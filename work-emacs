@@ -37,6 +37,12 @@
 ;; no more "command attempted to use minibuffer while in minibuffer"
 (setq enable-recursive-minibuffers t)
 
+;; save history of minibuffer between sessions
+(savehist-mode 1)
+(setq history-length 1000)
+
+(prefer-coding-system 'utf-8)
+
 (require 'cl)
 ;; custom keybindings
 (require 'hippie-exp)
@@ -187,17 +193,18 @@
              (let ((file (file-name-nondirectory buffer-file-name)))
                (concat "php -l " file)))))
 
-;; SQL Mode
+;;; SQL Mode
 (setq sql-product 'mysql)
 (add-hook 'sql-mode-hook
           (lambda ()
             (sql-highlight-mysql-keywords)))
-;; Hide-Show
+
+;;; Hide-Show
 (define-key hs-minor-mode-map (kbd "C-c q C-c") 'hs-toggle-hiding)
 (define-key hs-minor-mode-map (kbd "C-c q C-l") 'hs-hide-level)
 (define-key hs-minor-mode-map (kbd "C-c q C-M-s") 'hs-show-all)
 
-;; org mode
+;;; org mode
 (require 'org)
 (add-hook 'org-mode-hook 'visual-line-mode)
 (defun org-summary-todo (n-done n-not-done)
@@ -215,6 +222,8 @@
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cl" 'org-store-link)
 
+(setq org-todo-keywords
+       '((sequence "TODO" "FEEDBACK" "|" "DONE" "WONTFIX")))
 ;; Org LaTeX setup
 (setq org-latex-default-packages-alist
       '(("" "fontspec" t)
@@ -231,18 +240,6 @@
         ("babel" "csquotes" t)
         "\\tolerance=1000"))
 (setq org-latex-pdf-process '("latexmk -xelatex -bibtex-cond -f %f" "latexmk -xelatex -bibtex-cond -f -c %f"))
-
-(defun my-rtcite-export-handler (path desc format)
-  "Export handler for rtcite:<bib file>::<cite> links"
-  (let* ((search (when (string-match "::#?\\(.+\\)\\'" path)
-                   (match-string 1 path)))
-         (path (substring path 0 (match-beginning 0))))
-    (cond ((eq format 'latex)
-           (if (or (not desc)
-                   (equal 0 (search "rtcite:" desc)))
-               (format "\\cite{%s}" search)
-             (format "\\cite[%s]{%s}" desc search))))))
-(org-add-link-type "rtcite" nil 'my-rtcite-export-handler)
 
 
 (require 'http-twiddle)
@@ -334,9 +331,10 @@
   (interactive)
   (push-mark)
   (goto-char (point-min))
-  (if (= 0 (coding-system-eol-type buffer-file-coding-system))
-      (replace-regexp "[ \t\r]+$" "") ; eliminate CR in unix files
-      (replace-regexp "[ \t]+$" ""))
+  (let ((eol (coding-system-eol-type buffer-file-coding-system)))
+    (if (and (numberp eol) (= 0 eol))
+        (replace-regexp "[ \t\r]+$" "") ; eliminate CR in unix files
+        (replace-regexp "[ \t]+$" "")))
   (set-mark-command t)
   (set-mark-command t))
 (global-set-key "\C-cw" 'kill-whitespace)
@@ -454,52 +452,20 @@
   (when (file-exists-p host-file)
       (load-file host-file)))
 
+;;; Projekt Mode
 (require 'projekt)
 
-;; magit
-(autoload 'magit-status "magit" nil t)
-
-;; execute in terminal voor beeter vizibility
-;; (defun term-colors ()
-;;   (interactive)
-;;   (custom-set-faces
-;;    '(default ((t (:background "black" :foreground "white" :slant normal :weight normal :height 90 :width normal :family "b&h-lucidatypewriter"))))
-;;    '(region ((t (:background "white" :foreground "black"))))))
-
-;; (defun normal-colors ()
-;;   (interactive)
-;;   (custom-set-faces
-;;    '(default ((t (:background "white" :foreground "black" :slant normal :weight normal :height 90 :width normal :family "lucidatypewriter"))))
-;;    '(region ((t (:background "black" :foreground "white"))))))
-
-;; (let ((font "LucidaTypewriter-12"))
-;;   (set-frame-font font)
-;;  (add-to-list 'default-frame-alist (cons 'font  font)))
-
- ;; '(default ((t (:stipple nil :background "white" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 100 :width normal :foundry "misc" :family "fixed"))))
-
-;; (set-default-font "Bitstream Vera Sans Mono-10")
-;; (set-default-font "Deja Vu Sans Mono")
-;; (set-default-font "Monaco")
+;;; magit
+(autoload 'magit-status "magit" "eMagic for git" t)
+(global-set-key (kbd "C-c m") 'magit-status)
 
 ;;; Stuff that emacs modifies herself
-
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :background "white" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 120 :width normal :foundry "unknown" :family "Inconsolata"))))
- '(font-lock-function-name-face ((((class color) (min-colors 88) (background light)) (:foreground "Blue1"))))
- '(font-lock-keyword-face ((((class color) (min-colors 88) (background light)) (:foreground "Purple" :height 1.0))))
- '(font-lock-string-face ((t (:foreground "Green4"))))
- '(font-lock-variable-name-face ((((class color) (background light)) (:foreground "SteelBlue"))))
  '(menu ((((type x-toolkit)) (:background "white" :foreground "black"))))
- '(mode-line ((((type x w32 mac) (class color)) (:background "white" :foreground "black" :box (:line-width -1 :color "black")))))
- '(mode-line-inactive ((t (:inherit mode-line :box (:line-width -1 :color "grey75")))))
- '(org-done ((t (:foreground "ForestGreen" :weight normal :strike-through t))))
- '(org-headline-done ((t (:foreground "SaddleBrown" :strike-through t))))
- '(region ((t (:background "black" :foreground "white"))))
  '(variable-pitch ((t (:height 0.8 :family "Droid Sans")))))
 
 (custom-set-variables
@@ -511,7 +477,6 @@
  '(column-number-mode t)
  '(css-indent-level 2)
  '(css-indent-offset 2)
- '(current-language-environment "Latin-9")
  '(delete-selection-mode nil)
  '(diff-switches (quote ("-u" "-w" "-B" "-b")))
  '(fill-column 72)
@@ -522,7 +487,7 @@
  '(js2-highlight-level 3)
  '(js2-use-font-lock-faces t)
  '(keyboard-coding-system (quote iso-8859-1))
- '(safe-local-variable-values (quote ((Syntax . COMMON-LISP) (Package . CL-USER) (Base . 10) (sql-product . mysql) (c-basic-indent . 4) (mule-coding . latin-9) (c-basic-indent . 2))))
+ '(safe-local-variable-values (quote ((org-confirm-babel-evaluate) (buffer-file-coding-system . latin-9) (Syntax . COMMON-LISP) (Package . CL-USER) (Base . 10) (sql-product . mysql) (c-basic-indent . 4) (mule-coding . latin-9) (c-basic-indent . 2))))
  '(scroll-bar-mode (quote right))
  '(show-paren-mode t)
  '(twitter-username "tekai")
