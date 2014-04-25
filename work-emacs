@@ -8,7 +8,7 @@
 
 (setq default-frame-alist '((font-backend . "xft")
                             ;; (font . "DejaVu Sans Mono-10")
-                            (font . "Inconsolata-12")
+                            (font . "Inconsolata-11")
                             (tool-bar-lines . 0)))
 
 ;; no toolbar, no menu for me
@@ -48,7 +48,7 @@
 (require 'hippie-exp)
 (global-set-key [C-tab] 'other-window)
 (global-set-key (kbd "C-x O") (lambda () (interactive) (other-window -1)))
-(global-set-key "\M-g" 'goto-line)      ;standard in xemacs but not in gnu-emacs
+(global-set-key "\M-g" 'goto-line)
 (global-set-key "\M-E" 'hippie-expand) ; for the Mac
 (global-set-key "\C-cf" 'ack)
 (global-set-key [(super e)] 'hippie-expand)
@@ -59,11 +59,6 @@
 (global-set-key (kbd "C-c C-SPC") 'delete-horizontal-space)
 (global-set-key [(hyper .)] 'find-tag-other-window)
 (global-set-key [C-M-backspace] 'backward-kill-sexp) ; WARNING: by default this kills the X server!!
-(global-set-key (kbd "<f11>")
-                (lambda ()
-                  (interactive)
-                  (when (buffer-file-name)
-                    (async-shell-command (format "tkdiff `basename %s`" (buffer-file-name)) nil nil))))
 (global-set-key "[" 'insert-pair)
 (global-set-key "\"" 'insert-pair)
 (global-set-key "\M-'" 'insert-pair)
@@ -93,8 +88,8 @@
 (defun title-with-path ()
   "If possible set window title to \"emacs@<system>: /path/to/file\""
   (when (or (eq window-system 'x)
-          (eq window-system 'mac)
-          (eq window-system 'w32))
+            (eq window-system 'mac)
+            (eq window-system 'w32))
       (setq frame-title-format
             '(:eval (if buffer-file-name
                        (list "emacs@" system-name " : %f")
@@ -134,10 +129,14 @@
     'js2-mode '(("\\<\\(HACK\\)" 1 font-lock-hack-face t)))
 
 ;;; Set up load-path
-;; this is system specific!
-(add-to-list 'load-path "/home/eeschner/emacs")
-(add-to-list 'load-path "/home/eeschner/emacs/g-client")
-(add-to-list 'load-path "/home/eeschner/emacs/geben")
+(add-to-list 'load-path "~/.emacs.d/libs")
+(add-to-list 'load-path "~/.emacs.d/libs/g-client")
+(add-to-list 'load-path "~/.emacs.d/libs/geben")
+(add-to-list 'load-path "~/.emacs.d/libs/dash")
+(add-to-list 'load-path "~/.emacs.d/libs/pkg-info")
+(add-to-list 'load-path "~/.emacs.d/libs/epl")
+(add-to-list 'load-path "~/.emacs.d/libs/cider")
+(add-to-list 'load-path "~/.emacs.d/libs/clojure-mode")
 
 
 ;;; Set up major/minor-modes
@@ -145,22 +144,11 @@
 ;;; Tramp
 (setq tramp-default-method "ssh")
 
-;;; Version Control & CVS
-;; status befehl aufrufen
-(global-set-key "\C-cv" 'cvs-status)
-;; Ignore most whitespace changes for diff
-;(setq vc-diff-switches (quote ("-w" "-B" "-u")))
-
 ;;; Abbrev
 ;; ensure abbrev mode is always on
 (setq-default abbrev-mode t)
 ;; do not bug me about saving my abbreviations
 (setq save-abbrevs nil)
-
-(require 'hideshow)
-(add-to-list 'hs-special-modes-alist
-             '(php-mode "{" "}" "/[*/]" nil hs-c-like-adjust-block-beginning))
-(global-set-key [(super c)] 'hs-toggle-hiding)
 
 ;;; C Modes
 (add-hook 'c-mode-common-hook
@@ -175,15 +163,11 @@
 
 ;;; PHP
 (require 'php-mode)
-(setq php-completion-file "/home/eeschner/emacs/php-functions"
-      php-search-url "http://www.php.net/"
-      php-manual-url "http://samba.office/docs/php-manual-eng/")
+(setq php-search-url "http://www.php.net/")
 (define-key php-mode-map "'" 'insert-pair)
 (define-key php-mode-map "(" 'insert-parentheses)
 (define-key php-mode-map "\C-c\C-d" 'php-search-documentation)
 (define-key php-mode-map (kbd "<f10>") 'php-debug-file)
-(define-key php-mode-map [f3] 'flymake-display-err-menu-for-current-line)
-(define-key php-mode-map [f4] 'flymake-goto-next-error)
 (define-key php-mode-map [f12] 'php-check-syntax-and-goto-line)
 (add-hook 'php-mode-hook
           '(lambda ()
@@ -200,6 +184,10 @@
             (sql-highlight-mysql-keywords)))
 
 ;;; Hide-Show
+(require 'hideshow)
+(add-to-list 'hs-special-modes-alist
+             '(php-mode "{" "}" "/[*/]" nil hs-c-like-adjust-block-beginning))
+(define-key hs-minor-mode-map [(super c)] 'hs-toggle-hiding)
 (define-key hs-minor-mode-map (kbd "C-c q C-c") 'hs-toggle-hiding)
 (define-key hs-minor-mode-map (kbd "C-c q C-l") 'hs-hide-level)
 (define-key hs-minor-mode-map (kbd "C-c q C-M-s") 'hs-show-all)
@@ -222,8 +210,6 @@
 (global-set-key "\C-ca" 'org-agenda)
 (global-set-key "\C-cl" 'org-store-link)
 
-(setq org-todo-keywords
-       '((sequence "TODO" "FEEDBACK" "|" "DONE" "WONTFIX")))
 ;; Org LaTeX setup
 (setq org-latex-default-packages-alist
       '(("" "fontspec" t)
@@ -242,7 +228,7 @@
 (setq org-latex-pdf-process '("latexmk -xelatex -bibtex-cond -f %f" "latexmk -xelatex -bibtex-cond -f -c %f"))
 
 
-(require 'http-twiddle)
+
 
 
 ;;; Set up Slime
@@ -251,47 +237,13 @@
 ;; Replace "sbcl" with the path to your implementation
 (setq inferior-lisp-program "clozure-cl")
 
-;; ;; System specific!
-;; (setq common-lisp-hyperspec-root "file:///home/tekai/lisp/doc/HyperSpec/")
-;; (setq inferior-lisp-program "/home/eeschner/ccl/lx86cl") ; your Lisp system
-;; (require 'slime)
-;; (slime-setup)
-;; (slime-autodoc-mode)
-;; (setq inferior-lisp-program "lisp")
-
-;; (autoload 'scheme-smart-complete "scheme-complete" nil t)
-;; (eval-after-load 'scheme
-;;   '(define-key scheme-mode-map "\e\t" 'scheme-complete-or-indent))
-
-
-;; JS2 Mode by S. Yegge
+;;: JS2 Mode by S. Yegge
 (autoload 'js2-mode "js2" nil t)
 (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
 ;; js2-mode rebinds this to some debugging aid instead of mouse-set-point
 ;; and thus C-s begins a region
 ;;(define-key js2-mode-map [mouse-1] nil)
 
-(require 'js-comint)
-(setq inferior-js-program-command "js -i")
-(add-hook 'js2-mode-hook
-          '(lambda ()
-            (local-set-key "\C-x\C-e" 'js-send-last-sexp)
-            (local-set-key "\C-\M-x" 'js-send-last-sexp-and-go)
-            (local-set-key "\C-cb" 'js-send-buffer)
-            (local-set-key "\C-c\C-b" 'js-send-buffer-and-go)
-            (local-set-key "\C-cl" 'js-load-file-and-go)
-            (local-set-key [mouse-1] nil)
-            ;; ;; make emacs recognize the error format produced by jslint
-            (set (make-local-variable 'compilation-error-regexp-alist)
-             (list
-              (list "^Lint at line \\([0-9]+\\) character \\([0-9]+\\):[^\n]+\n\\([^\n]+\\)"  1 2 1 3)
-              (list "^jslint \\(.+\\)" 1 nil nil 0)))
-            ;;  '(("^\\([a-zA-Z.0-9_/-]+\\):\\([0-9]+\\):\\([0-9]+\\)" 1 2 3)))
-            (set (make-local-variable 'compile-command)
-             (let ((file (file-name-nondirectory buffer-file-name)))
-               (concat "jslint " file)))
-            ))
-(require 'js "js.el")
 
 ;;; browse in emacs
 (require 'w3m-load)
@@ -299,30 +251,45 @@
 (setq browse-url-browser-function 'w3m-browse-url
       browse-url-new-window-flag nil)
 
-;;; Wiki stuff
-(autoload 'wikipedia-mode "wikipedia-mode.el"
-  "Major mode for editing documents in Wikipedia markup." t)
-
 ;;; RFCview
 (add-to-list 'auto-mode-alist
              '("/\\(rfc\\|std\\)[0-9]+\\.txt\\'" . rfcview-mode))
 (autoload 'rfcview-mode "rfcview" nil t)
 
-;; Search with ack
+;;; ack - better than grep
 (autoload 'ack-same "full-ack" nil t)
 (autoload 'ack "full-ack" nil t)
 (autoload 'ack-find-same-file "full-ack" nil t)
 (autoload 'ack-find-file "full-ack" nil t)
 
-;; LUA
+;;; LUA
 (autoload 'lua-mode "lua-mode" "Lua editing mode." t)
 (add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
 (add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
 (setq lua-indent-level 2) ; because that's easier ingame
 
-;; TeX
+;;; TeX
 (setq tex-run-command "xetex")
 (setq latex-run-command "xelatex")
+
+
+;;; Clojure
+(require 'clojure-mode)
+(require 'cider)
+(require 'cider-macroexpansion)
+(add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
+
+;;; PHP debugger
+(autoload 'geben "geben" "PHP Debugger on Emacs" t)
+(setq geben-source-coding-system 'latin-9)
+
+;;; Projekt Mode
+(require 'projekt)
+
+;;; magit
+(autoload 'magit-status "magit" "eMagic for git" t)
+(global-set-key (kbd "C-c m") 'magit-status)
+
 
 ;;; My own simple functions
 ;;; aka kleine Helferlein
@@ -419,45 +386,11 @@
 ;;                      (funcall interprogram-paste-function)))
 ;;       ad-do-it))
 
-;;; PHP debugger
-;;(load-file "/home/eeschner/emacs/cedet/common/cedet.el")
-(autoload 'geben "geben" "PHP Debugger on Emacs" t)
-(setq geben-source-coding-system 'latin-9)
-
-
-;; sad fact, but cedet has no proper PHP support
-;; because it lacks a proper maintainer :(
-;; (require 'semantic)
-;; (require 'semantic/sb)
-;; (require 'srecode)
-;; (global-ede-mode 0)
-;; (semantic-mode 1)
-
-;;; Info setup
-(require 'info)
-(setq Info-directory-list (list "/home/eeschner/Applications/emacs/info/"
-                                "/home/eeschner/Applications/emacs/share/info/"
-                                "/usr/local/info"
-                                "/usr/share/info"
-                                "/usr/info"
-                                "/opt/gnome/share/info"
-                                ))
 ;(setq Info-dir-contents nil) ;; to reset & reread info dirs
 ;;; LOAD custom libraries
-(load-file "/home/eeschner/emacs/my-js.el")
-(load-file "/home/eeschner/git/tools/php.el")
-(load-file "/home/eeschner/emacs/skeletons.el")
-(load-file "/home/eeschner/emacs/epharmexx.el")
 (let ((host-file (format "~/.emacs.d/%s.el" system-name)))
   (when (file-exists-p host-file)
       (load-file host-file)))
-
-;;; Projekt Mode
-(require 'projekt)
-
-;;; magit
-(autoload 'magit-status "magit" "eMagic for git" t)
-(global-set-key (kbd "C-c m") 'magit-status)
 
 ;;; Stuff that emacs modifies herself
 (custom-set-faces
