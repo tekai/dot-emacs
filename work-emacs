@@ -7,8 +7,9 @@
               cursor-in-non-selected-windows nil)
 
 (setq default-frame-alist '((font-backend . "xft")
-                            ;; (font . "DejaVu Sans Mono-10")
-                            (font . "Inconsolata-11")
+                            (font . "DejaVu Sans Mono-9")
+                            ;; (font . "Inconsolata-11")
+                            (vertical-scroll-bars . right)
                             (tool-bar-lines . 0)))
 
 ;; no toolbar, no menu for me
@@ -25,6 +26,7 @@
 ;; parentheses
 (show-paren-mode t)
 (setq parens-require-spaces nil)
+(setq show-paren-style 'expression)
 
 ;; Show Row and Column
 (line-number-mode t)
@@ -65,7 +67,12 @@
 (global-set-key "(" 'insert-parentheses)
 (global-set-key "\M-_" 'align-regexp)
 (global-set-key (kbd "<f9>") 'compile)
-
+(global-set-key (kbd "C-c \"")
+                (lambda (arg)
+                  (interactive "P")
+                  (if arg (setq arg (prefix-numeric-value arg))
+                    (setq arg 0))
+                  (insert-pair arg ?„ ?“)))
 
 ;; M-% = query-replace
 ;; M-& = query-replace-regexp
@@ -160,6 +167,12 @@
             ;; funktion um else/if ( => ++, sonst => + zu erwirken
             (c-set-offset 'arglist-cont-nonempty '+)))
 
+(setq c-default-style
+      '((java-mode . "java")
+        (awk-mode . "awk")
+        (c-mode . "bsd")
+        (other . "gnu")))
+
 
 ;;; PHP
 (require 'php-mode)
@@ -227,15 +240,22 @@
         "\\tolerance=1000"))
 (setq org-latex-pdf-process '("latexmk -xelatex -bibtex-cond -f %f" "latexmk -xelatex -bibtex-cond -f -c %f"))
 
-
-
+(defun ees/org-sort-todo-list ()
+  "Sort buffer in alphabetical order, then priority, then by TODO."
+  (interactive)
+  (save-excursion
+    (mark-whole-buffer)
+    (org-sort-entries nil ?a)
+    (org-sort-entries nil ?p)
+    (org-sort-entries nil ?O))
+  (org-overview))
 
 
 ;;; Set up Slime
 (setq lisp-indent-function #'common-lisp-indent-function)
-(load (expand-file-name "~/quicklisp/slime-helper.el"))
-;; Replace "sbcl" with the path to your implementation
-(setq inferior-lisp-program "clozure-cl")
+;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
+;; ;; Replace "sbcl" with the path to your implementation
+;; (setq inferior-lisp-program "clozure-cl")
 
 ;;: JS2 Mode by S. Yegge
 (autoload 'js2-mode "js2" nil t)
@@ -290,6 +310,15 @@
 (autoload 'magit-status "magit" "eMagic for git" t)
 (global-set-key (kbd "C-c m") 'magit-status)
 
+;;; Markdown
+(autoload 'markdown-mode "markdown-mode"
+   "Major mode for editing Markdown files" t)
+(autoload 'gfm-mode "markdown-mode"
+   "Major mode for editing Markdown files" t)
+(add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("README\\.md\\'" . gfm-mode))
 
 ;;; My own simple functions
 ;;; aka kleine Helferlein
@@ -363,6 +392,7 @@
       (setq depth (+ depth 1)))
     (when (file-exists-p file)
       (visit-tags-table (file-truename file)))))
+
 (defadvice find-tag-other-window (before find-tag-file-ow activate)
   "Automatically search for tags in higher directories."
   (let ((depth 0)
@@ -373,6 +403,17 @@
       (setq depth (+ depth 1)))
     (when (file-exists-p file)
       (visit-tags-table (file-truename file)))))
+
+(when (memq window-system '(w32 ns))
+  (defun explorer ()
+    "Open file browser window at the buffers current directory."
+    (interactive)
+    (let ((dir (file-name-directory (convert-standard-filename buffer-file-name))))
+      (if (eq window-system 'w32)
+          (w32-shell-execute "open" "explorer"
+                             (concat "/e,/select," dir))
+          (shell-command (concat "open " dir)))))
+  (global-set-key (kbd "<f12>") 'explorer))
 
 ;; doesn't work
 ;; (x-get-selection 'PRIMARY)
@@ -398,8 +439,9 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(default ((t (:height 90 :width normal :family "DejaVu Sans Mono"))))
  '(menu ((((type x-toolkit)) (:background "white" :foreground "black"))))
- '(variable-pitch ((t (:height 0.8 :family "Droid Sans")))))
+ '(variable-pitch ((t (:family "DejaVu Sans")))))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
