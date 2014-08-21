@@ -306,13 +306,6 @@
 (setq tex-run-command "xetex")
 (setq latex-run-command "xelatex")
 
-
-;;; Clojure
-(require 'clojure-mode)
-(require 'cider)
-(require 'cider-macroexpansion)
-(add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
-
 ;;; PHP debugger
 (autoload 'geben "geben" "PHP Debugger on Emacs" t)
 (setq geben-source-coding-system 'latin-9)
@@ -418,6 +411,7 @@
     (when (file-exists-p file)
       (visit-tags-table (file-truename file)))))
 
+;; doesn't execute when loaded as daemon
 (when (memq window-system '(w32 ns x))
   (defun explorer ()
     "Open file browser window at the buffers current directory."
@@ -467,7 +461,7 @@
  '(css-indent-level 2)
  '(css-indent-offset 2)
  '(delete-selection-mode nil)
- '(diff-switches (quote ("-u" "-w" "-B" "-b")))
+ '(diff-switches (quote ("-u" "-w")))
  '(fill-column 72)
  '(grep-command "grep -nH -r -e ")
  '(grep-template "grep <C> -nH -r -e <R> <F>")
