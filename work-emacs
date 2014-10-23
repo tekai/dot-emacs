@@ -86,6 +86,7 @@
 (setq-default indent-tabs-mode nil)
 (setq-default tab-always-indent t)
 (setq-default truncate-lines nil)
+(electric-indent-mode -1)
 
 ;; start server for emacsclient ()
 ;; (server-start)
@@ -138,6 +139,8 @@
 
 ;;; Set up load-path
 (add-to-list 'load-path "~/.emacs.d/libs")
+(add-to-list 'load-path "~/.emacs.d/libs/git-modes")
+(add-to-list 'load-path "~/.emacs.d/libs/magit")
 (add-to-list 'load-path "~/.emacs.d/libs/g-client")
 (add-to-list 'load-path "~/.emacs.d/libs/geben")
 (add-to-list 'load-path "~/.emacs.d/libs/dash")
@@ -281,12 +284,6 @@
 ;; and thus C-s begins a region
 ;;(define-key js2-mode-map [mouse-1] nil)
 
-
-;;; browse in emacs
-(require 'w3m-load)
-(autoload 'w3m-browse-url "w3m" "Ask a WWW browser to show a URL." t)
-(setq browse-url-browser-function 'w3m-browse-url
-      browse-url-new-window-flag nil)
 
 ;;; RFCview
 (add-to-list 'auto-mode-alist
