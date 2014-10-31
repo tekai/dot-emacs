@@ -412,16 +412,14 @@
       (visit-tags-table (file-truename file)))))
 
 ;; doesn't execute when loaded as daemon
-(when (memq window-system '(w32 ns x))
-  (defun explorer ()
-    "Open file browser window at the buffers current directory."
-    (interactive)
-    (let ((dir default-directory))
-      (case window-system
-        ('w32 (w32-shell-execute "open" "explorer" (concat "/e,/select," dir)))
-        ('ns (shell-command (format "open %s" dir) nil))
-        ('x (call-process "xterm" nil 0 nil) nil))))
-  (global-set-key (kbd "<f12>") 'explorer))
+(defun explorer ()
+  "Open file browser window at the buffers current directory."
+  (interactive)
+  (let ((dir default-directory))
+    (case window-system
+      ('w32 (w32-shell-execute "open" "explorer" (concat "/e,/select," dir)))
+      ('ns (shell-command (format "open %s" dir) nil))
+      ('x (call-process "xterm" nil 0 nil) nil))))
 
 ;; doesn't work
 ;; (x-get-selection 'PRIMARY)
