@@ -315,7 +315,17 @@
 
 ;;; magit
 (autoload 'magit-status "magit" "eMagic for git" t)
+(setq magit-auto-revert-mode nil)
 (global-set-key (kbd "C-c m") 'magit-status)
+
+;; smerge - merging conflicts made easy
+(autoload 'smerge-mode "smerge-mode" nil t)
+(defun sm-try-smerge ()
+  (save-excursion
+    (goto-char (point-min))
+    (when (re-search-forward "^<<<<<<< " nil t)
+      (smerge-mode 1))))
+(add-hook 'find-file-hook 'sm-try-smerge t)
 
 ;;; Markdown
 (autoload 'markdown-mode "markdown-mode"
@@ -445,8 +455,6 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:height 90 :width normal :family "DejaVu Sans Mono"))))
- '(menu ((((type x-toolkit)) (:background "white" :foreground "black"))))
  '(variable-pitch ((t (:family "DejaVu Sans")))))
 
 (custom-set-variables
@@ -468,7 +476,17 @@
  '(js2-highlight-level 3)
  '(js2-use-font-lock-faces t)
  '(keyboard-coding-system (quote iso-8859-1))
- '(safe-local-variable-values (quote ((org-confirm-babel-evaluate) (buffer-file-coding-system . latin-9) (Syntax . COMMON-LISP) (Package . CL-USER) (Base . 10) (sql-product . mysql) (c-basic-indent . 4) (mule-coding . latin-9) (c-basic-indent . 2))))
+ '(safe-local-variable-values
+   (quote
+    ((org-confirm-babel-evaluate)
+     (buffer-file-coding-system . latin-9)
+     (Syntax . COMMON-LISP)
+     (Package . CL-USER)
+     (Base . 10)
+     (sql-product . mysql)
+     (c-basic-indent . 4)
+     (mule-coding . latin-9)
+     (c-basic-indent . 2))))
  '(scroll-bar-mode (quote right))
  '(show-paren-mode t)
  '(twitter-username "tekai")
