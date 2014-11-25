@@ -44,6 +44,10 @@
 
 (prefer-coding-system 'utf-8)
 
+;; MUST BE BEFORE ANY REQUIRE ETC.
+;; load the newer file of .el / .elc
+(setq load-prefer-newer t)
+
 (require 'cl)
 ;; custom keybindings
 (require 'hippie-exp)
@@ -93,14 +97,6 @@
 (setq server-visit-hook 'raise-frame)
 (setq gnuserv-frame (selected-frame))
 
-(defun title-with-path ()
-  "If possible set window title to \"emacs@<system>: /path/to/file\""
-  (when (memq window-system '(x mac w32))
-      (setq frame-title-format
-            '(:eval (if buffer-file-name
-                       (list "emacs@" system-name " : %f")
-                       "emacs : %b")))))
-
 ;; change buffer naming strategy from file<2> to file:dir/dir
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'post-forward
@@ -143,12 +139,6 @@
 (add-to-list 'load-path "~/.emacs.d/libs/magit")
 (add-to-list 'load-path "~/.emacs.d/libs/g-client")
 (add-to-list 'load-path "~/.emacs.d/libs/geben")
-(add-to-list 'load-path "~/.emacs.d/libs/dash")
-(add-to-list 'load-path "~/.emacs.d/libs/pkg-info")
-(add-to-list 'load-path "~/.emacs.d/libs/epl")
-(add-to-list 'load-path "~/.emacs.d/libs/cider")
-(add-to-list 'load-path "~/.emacs.d/libs/clojure-mode")
-
 
 ;; Mac stuff
 (when (eq system-type 'darwin)
