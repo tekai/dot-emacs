@@ -77,6 +77,7 @@
                   (if arg (setq arg (prefix-numeric-value arg))
                     (setq arg 0))
                   (insert-pair arg ?„ ?“)))
+(global-unset-key [f11]) ; use M-x toogle-frame-fullscreen instead
 
 ;; M-% = query-replace
 ;; M-& = query-replace-regexp
