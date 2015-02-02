@@ -15,10 +15,6 @@
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 
-;; maximum font lock
-(global-font-lock-mode t)
-(setq font-lock-maximum-decoration t)
-
 ;; Set Zmacs mode (highlight marked text)
 (transient-mark-mode t)
 
@@ -97,6 +93,13 @@
 ;; (server-start)
 (setq server-visit-hook 'raise-frame)
 (setq gnuserv-frame (selected-frame))
+
+;; maximum font lock
+(require 'font-lock)
+(require 'lazy-lock)
+(setq font-lock-support-mode '((php-mode . lazy-lock-mode) (t . jit-lock-mode)))
+(global-font-lock-mode t)
+(setq font-lock-maximum-decoration t)
 
 ;; change buffer naming strategy from file<2> to file:dir/dir
 (require 'uniquify)
@@ -186,7 +189,8 @@
 
 ;;; PHP
 (require 'php-mode)
-(setq php-search-url "http://www.php.net/")
+(setq php-search-url "http://php.net/")
+(setq php-template-compatibility nil)
 (define-key php-mode-map "'" 'insert-pair)
 (define-key php-mode-map "(" 'insert-parentheses)
 (define-key php-mode-map "\C-c\C-d" 'php-search-documentation)
@@ -467,6 +471,7 @@
  '(js2-highlight-level 3)
  '(js2-use-font-lock-faces t)
  '(keyboard-coding-system (quote iso-8859-1))
+ '(magit-diff-options (quote ("--ignore-all-space")))
  '(safe-local-variable-values
    (quote
     ((org-confirm-babel-evaluate)
