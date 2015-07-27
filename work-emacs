@@ -40,6 +40,8 @@
 
 (prefer-coding-system 'utf-8)
 
+(setq save-interprogram-paste-before-kill t)
+
 ;; MUST BE BEFORE ANY REQUIRE ETC.
 ;; load the newer file of .el / .elc
 (setq load-prefer-newer t)
@@ -98,6 +100,7 @@
 (require 'font-lock)
 (require 'lazy-lock)
 (setq font-lock-support-mode '((php-mode . lazy-lock-mode) (t . jit-lock-mode)))
+;; (setq font-lock-support-mode '((t . jit-lock-mode)))
 (global-font-lock-mode t)
 (setq font-lock-maximum-decoration t)
 
@@ -186,11 +189,11 @@
         (c-mode . "bsd")
         (other . "gnu")))
 
-
 ;;; PHP
 (require 'php-mode)
 (setq php-search-url "http://php.net/")
 (setq php-template-compatibility nil)
+(setq php-lineup-cascaded-calls nil)
 (define-key php-mode-map "'" 'insert-pair)
 (define-key php-mode-map "(" 'insert-parentheses)
 (define-key php-mode-map "\C-c\C-d" 'php-search-documentation)
@@ -310,7 +313,10 @@
 
 ;;; magit
 (autoload 'magit-status "magit" "eMagic for git" t)
-(setq magit-auto-revert-mode nil)
+(setq magit-last-seen-setup-instructions "1.4.0"
+      magit-auto-revert-mode nil
+      magit-revert-buffers nil
+      magit-push-always-verify nil)
 (global-set-key (kbd "C-c m") 'magit-status)
 
 ;; smerge - merging conflicts made easy
@@ -425,18 +431,6 @@
       ('w32 (w32-shell-execute "open" "explorer" (concat "/e,/select," dir)))
       ('ns (shell-command (format "open %s" dir) nil))
       ('x (call-process "xterm" nil 0 nil) nil))))
-
-;; doesn't work
-;; (x-get-selection 'PRIMARY)
-;; (or (x-get-selection-value)
-;;     (x-get-selection 'PRIMARY))
-;; (x-get-selection-value
-;; (defadvice kill-ring-save (around interprogram-yank activate)
-;;   "if no region is selected add the contents of the selection to the kill ring"
-;;   (if (= (ad-get-arg 0) (ad-get-arg 1))
-;;       (kill-new (and interprogram-paste-function
-;;                      (funcall interprogram-paste-function)))
-;;       ad-do-it))
 
 ;(setq Info-dir-contents nil) ;; to reset & reread info dirs
 ;;; LOAD custom libraries
