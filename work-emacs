@@ -315,7 +315,6 @@
 (autoload 'magit-status "magit" "eMagic for git" t)
 (setq magit-last-seen-setup-instructions "1.4.0"
       magit-auto-revert-mode nil
-      magit-revert-buffers nil
       magit-push-always-verify nil)
 (global-set-key (kbd "C-c m") 'magit-status)
 
