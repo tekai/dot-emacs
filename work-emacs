@@ -270,7 +270,7 @@
 
 
 ;;; Set up Slime
-(setq lisp-indent-function #'common-lisp-indent-function)
+;; (setq lisp-indent-function #'common-lisp-indent-function)
 ;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
 ;; ;; Replace "sbcl" with the path to your implementation
 ;; (setq inferior-lisp-program "clozure-cl")
