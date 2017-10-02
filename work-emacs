@@ -1,4 +1,11 @@
 ;; -*- mode: emacs-lisp -*-
+
+;; Added by Package.el.  This must come before configurations of
+;; installed packages.  Don't delete this line.  If you don't want it,
+;; just comment it out by adding a semicolon to the start of the line.
+;; You may delete these explanatory comments.
+(package-initialize)
+
 (setq-default inhibit-startup-message 't
               tool-bar-mode nil
               scroll-margin 0
@@ -53,7 +60,7 @@
 (global-set-key (kbd "C-x O") (lambda () (interactive) (other-window -1)))
 (global-set-key "\M-g" 'goto-line)
 (global-set-key "\M-E" 'hippie-expand) ; for the Mac
-(global-set-key "\C-cf" 'ag-regexp)
+(global-set-key "\C-cf" 'ag-project)
 (global-set-key [(super e)] 'hippie-expand)
 (global-set-key [(super s)] 'isearch-forward-regexp)
 (global-set-key [(hyper <)] 'end-of-buffer)
@@ -98,9 +105,9 @@
 
 ;; maximum font lock
 (require 'font-lock)
-(require 'lazy-lock)
-(setq font-lock-support-mode '((php-mode . lazy-lock-mode) (t . jit-lock-mode)))
-;; (setq font-lock-support-mode '((t . jit-lock-mode)))
+;; (require 'lazy-lock)
+;; (setq font-lock-support-mode '((php-mode . lazy-lock-mode) (t . jit-lock-mode)))
+(setq font-lock-support-mode '((t . jit-lock-mode)))
 (global-font-lock-mode t)
 (setq font-lock-maximum-decoration t)
 
@@ -160,9 +167,9 @@
 
 ;;; Set up major/minor-modes
 
-(require 'elisp-slime-nav)
-(dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
-  (add-hook hook 'elisp-slime-nav-mode))
+;(require 'elisp-slime-nav)
+;(dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
+;  (add-hook hook 'elisp-slime-nav-mode))
 
 ;;; Tramp
 (setq tramp-default-method "ssh")
@@ -191,9 +198,14 @@
 
 ;;; PHP
 (require 'php-mode)
-(setq php-search-url "http://php.net/")
-(setq php-template-compatibility nil)
-(setq php-lineup-cascaded-calls nil)
+(setq php-template-compatibility nil
+      php-lineup-cascaded-calls nil
+      php-mode-warn-if-mumamo-off "Don't warn"
+      php-search-url nil
+      php-template-compatibility nil
+      php-manual-url  'en
+      php-mode-coding-style 'default)
+
 (define-key php-mode-map "'" 'insert-pair)
 (define-key php-mode-map "(" 'insert-parentheses)
 (define-key php-mode-map "\C-c\C-d" 'php-search-documentation)
@@ -293,6 +305,10 @@
 (autoload 'ack "full-ack" nil t)
 (autoload 'ack-find-same-file "full-ack" nil t)
 (autoload 'ack-find-file "full-ack" nil t)
+
+
+;;; ag even better than ack
+(setq ag-highlight-search t)
 
 ;;; LUA
 (autoload 'lua-mode "lua-mode" "Lua editing mode." t)
@@ -465,6 +481,7 @@
  '(js2-use-font-lock-faces t)
  '(keyboard-coding-system (quote iso-8859-1))
  '(magit-diff-options (quote ("--ignore-all-space")))
+ '(package-selected-packages (quote (phpunit ag)))
  '(safe-local-variable-values
    (quote
     ((org-confirm-babel-evaluate)
