@@ -67,7 +67,7 @@
 (global-set-key [(super r)] (lambda () (interactive) (revert-buffer nil t)))
 (global-set-key [S-iso-lefttab] (lambda () (interactive) (let ((indent-tabs-mode t)) (insert-tab))))
 (global-set-key (kbd "C-c C-SPC") 'delete-horizontal-space)
-(global-set-key [(hyper .)] 'find-tag-other-window)
+(global-set-key [(hyper .)] 'xref-find-definitions-other-window)
 (global-set-key [C-M-backspace] 'backward-kill-sexp) ; WARNING: by default this kills the X server!!
 (global-set-key "[" 'insert-pair)
 (global-set-key "\"" 'insert-pair)
