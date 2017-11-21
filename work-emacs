@@ -331,7 +331,11 @@
 (autoload 'magit-status "magit" "eMagic for git" t)
 (setq magit-last-seen-setup-instructions "1.4.0"
       magit-auto-revert-mode nil
-      magit-push-always-verify nil)
+      magit-push-always-verify nil
+      magit-diff-paint-whitespace t
+      magit-diff-refine-hunk t
+      magit-diff-highlight-trailing t
+      magit-diff-hide-trailing-cr-characters nil)
 (global-set-key (kbd "C-c m") 'magit-status)
 
 ;; smerge - merging conflicts made easy
