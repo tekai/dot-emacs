@@ -175,9 +175,9 @@ parent directory and make it the buffer local `tags-file-name'"
              (not (string-prefix-p
                    (file-name-directory (file-truename tags-file-name))
                    (file-truename buffer-file-name))))
-    (let ((tags-file (locate-dominating-file default-directory "TAGS")))
-      (when (and tags-file (save-excursion (tags-verify-table (concat tags-file "TAGS"))))
-        (visit-tags-table tags-file-name t)))))
+    (let ((tags-dir (locate-dominating-file default-directory "TAGS")))
+      (when (and tags-dir (save-excursion (tags-verify-table (concat tags-dir "TAGS"))))
+        (visit-tags-table (concat tags-dir "TAGS") t)))))
 
 ;;; Set up major/minor-modes
 
@@ -222,7 +222,7 @@ parent directory and make it the buffer local `tags-file-name'"
 
 (define-key php-mode-map "'" 'insert-pair)
 (define-key php-mode-map "(" 'insert-parentheses)
-(define-key php-mode-map "\C-c\C-d" 'php-search-documentation)
+;; (define-key php-mode-map "\C-c\C-d" 'php-search-documentation)
 (define-key php-mode-map (kbd "<f10>") 'php-debug-file)
 (define-key php-mode-map [f11] 'php-check-syntax-and-goto-line)
 (add-hook 'php-mode-hook
