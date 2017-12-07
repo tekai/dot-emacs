@@ -167,14 +167,15 @@
 
 
 (defun ees/find-local-tags-file ()
-  "When the current `tags-file-name' isn't in a parent directory
-of the current `buffer-file-name', locate a valid TAGS file in a
-parent directory and make it the buffer local `tags-file-name'"
+  "When the current `tags-file-name' is nil or isn't in a parent
+directory of the current `buffer-file-name', locate a valid TAGS
+file in a parent directory and make it the buffer local
+`tags-file-name'"
   (when (and buffer-file-name
-             tags-file-name
-             (not (string-prefix-p
-                   (file-name-directory (file-truename tags-file-name))
-                   (file-truename buffer-file-name))))
+             (or (not tags-file-name)
+                 (not (string-prefix-p
+                       (file-name-directory (file-truename tags-file-name))
+                       (file-truename buffer-file-name)))))
     (let ((tags-dir (locate-dominating-file default-directory "TAGS")))
       (when (and tags-dir (save-excursion (tags-verify-table (concat tags-dir "TAGS"))))
         (visit-tags-table (concat tags-dir "TAGS") t)))))
