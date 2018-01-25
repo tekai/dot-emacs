@@ -180,6 +180,17 @@ file in a parent directory and make it the buffer local
       (when (and tags-dir (save-excursion (tags-verify-table (concat tags-dir "TAGS"))))
         (visit-tags-table (concat tags-dir "TAGS") t)))))
 
+
+(defun ees/mouse-xref (click)
+  "Call xref-find-definitions with a mouse event"
+  (interactive "e")
+  (with-selected-window (posn-window (event-start click))
+    (save-excursion
+      (goto-char (posn-point (event-start click)))
+      (call-interactively #'xref-find-definitions))))
+(add-to-list 'xref-prompt-for-identifier 'ees/mouse-xref t)
+(global-set-key [(super  mouse-1)] 'ees/mouse-xref)
+
 ;;; Set up major/minor-modes
 
 ;(require 'elisp-slime-nav)
