@@ -180,10 +180,10 @@ file in a parent directory and make it the buffer local
                  (not (string-prefix-p
                        (file-name-directory (file-truename tags-file-name))
                        (file-truename buffer-file-name)))))
-    (let ((tags-dir (locate-dominating-file default-directory "TAGS")))
-      (when (and tags-dir (save-excursion (tags-verify-table (concat tags-dir "TAGS"))))
-        (visit-tags-table (concat tags-dir "TAGS") t)))))
-
+    (let* ((tags-dir (locate-dominating-file default-directory "TAGS"))
+           (tags-file (and tags-dir (file-truename (concat tags-dir "TAGS")))))
+      (when (and tags-file (save-excursion (tags-verify-table tags-file)))
+        (visit-tags-table tags-file t)))))
 
 (require 'xref)
 (defun ees/mouse-xref (click)
