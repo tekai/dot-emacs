@@ -49,6 +49,8 @@
 
 (setq save-interprogram-paste-before-kill t)
 
+(setq mouse-yank-at-point t)
+
 ;; MUST BE BEFORE ANY REQUIRE ETC.
 ;; load the newer file of .el / .elc
 (setq load-prefer-newer t)
@@ -57,6 +59,7 @@
 ;; custom keybindings
 (require 'hippie-exp)
 (global-set-key [C-tab] 'other-window)
+(global-set-key [XF86Save] 'save-buffer)
 (global-set-key (kbd "C-x O") (lambda () (interactive) (other-window -1)))
 (global-set-key "\M-g" 'goto-line)
 (global-set-key "\M-E" 'hippie-expand) ; for the Mac
@@ -82,6 +85,7 @@
                   (if arg (setq arg (prefix-numeric-value arg))
                     (setq arg 0))
                   (insert-pair arg ?„ ?“)))
+(global-set-key [M-menu] 'eval-expression)
 (global-unset-key [f11]) ; use M-x toogle-frame-fullscreen instead
 
 ;; M-% = query-replace
@@ -181,6 +185,7 @@ file in a parent directory and make it the buffer local
         (visit-tags-table (concat tags-dir "TAGS") t)))))
 
 
+(require 'xref)
 (defun ees/mouse-xref (click)
   "Call xref-find-definitions with a mouse event"
   (interactive "e")
@@ -189,7 +194,7 @@ file in a parent directory and make it the buffer local
       (goto-char (posn-point (event-start click)))
       (call-interactively #'xref-find-definitions))))
 (add-to-list 'xref-prompt-for-identifier 'ees/mouse-xref t)
-(global-set-key [(super  mouse-1)] 'ees/mouse-xref)
+(global-set-key [(hyper  mouse-1)] 'ees/mouse-xref)
 
 ;;; Set up major/minor-modes
 
