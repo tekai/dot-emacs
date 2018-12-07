@@ -139,7 +139,7 @@
   (setq mac-command-modifier 'meta
         mac-option-modifier nil))
 
-
+;;: this function is buggy and doesn't work as a hook for php-mode
 (defun ees/find-local-tags-file ()
   "When the current `tags-file-name' is nil or isn't in a parent
 directory of the current `buffer-file-name', locate a valid TAGS
@@ -154,6 +154,8 @@ file in a parent directory and make it the buffer local
            (tags-file (and tags-dir (file-truename (concat tags-dir "TAGS")))))
       (when (and tags-file (save-excursion (tags-verify-table tags-file)))
         (visit-tags-table tags-file t)))))
+;; always start a new list of tags tables
+(setq tags-add-tables nil)
 
 (require 'xref)
 (defun ees/mouse-xref (click)
@@ -197,29 +199,74 @@ file in a parent directory and make it the buffer local
         (c-mode . "bsd")
         (other . "gnu")))
 
-;;; PHP
-(require 'php-mode)
-(setq php-template-compatibility nil
-      php-lineup-cascaded-calls nil
-      php-mode-warn-if-mumamo-off "Don't warn"
-      php-search-url nil
-      php-template-compatibility nil
-      php-manual-url  'en
-      php-mode-coding-style 'default)
+;;; Packaging
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/"))
 
-(define-key php-mode-map "'" 'insert-pair)
-(define-key php-mode-map "(" 'insert-parentheses)
-;; (define-key php-mode-map "\C-c\C-d" 'php-search-documentation)
-(define-key php-mode-map (kbd "<f10>") 'php-debug-file)
-(define-key php-mode-map [f11] 'php-check-syntax-and-goto-line)
-(add-hook 'php-mode-hook
-          '(lambda ()
-            (hs-minor-mode 1)
-            ;(flymake-mode 1) ; will nicht mit geben
-            (set (make-local-variable 'compile-command)
-             (let ((file (file-name-nondirectory buffer-file-name)))
-               (concat "php -l " file)))))
-(add-hook 'php-mode-hook 'ees/find-local-tags-file)
+(use-package js2-mode
+    :ensure t)
+;; js2-mode rebinds this to some debugging aid instead of
+;; mouse-set-point and thus C-s begins a region
+;;(define-key js2-mode-map [mouse-1] nil)
+(use-package auto-complete
+    :ensure t
+    :config (ac-config-default))
+(use-package yasnippet
+    :ensure t)
+(use-package yatemplate
+    :ensure t
+    :after (yasnippet))
+(use-package markdown-mode
+    :ensure t)
+(use-package magit
+    :ensure t
+    :config (progn
+              (setq magit-auto-revert-mode nil
+                    magit-revert-buffers nil
+                    magit-push-always-verify nil
+                    magit-last-seen-setup-instructions "1.4.0"
+                    magit-diff-paint-whitespace t
+                    magit-diff-refine-hunk t
+                    magit-diff-highlight-trailing t
+                    magit-diff-hide-trailing-cr-characters nil)
+              (global-set-key (kbd "C-c m") 'magit-status)))
+
+
+;;; PHP
+(use-package php-mode
+    :ensure t
+    :config (setq php-template-compatibility nil
+                  php-lineup-cascaded-calls nil
+                  php-mode-warn-if-mumamo-off "Don't warn"
+                  php-search-url nil
+                  php-manual-url  'en
+                  ;; php-mode-coding-style 'default
+                  php-search-documentation-browser-function 'eww-browse-url)
+    :bind (("'" . 'insert-pair)
+           ("(" . 'insert-parentheses)
+           ("C-c C-d" . 'php-search-documentation)
+           ("<f10>" . 'php-debug-file)
+           ("<f11>" . 'php-check-syntax-and-goto-line)
+           ("C-c C-y" . 'yas/create-php-snippet))
+    :hook ((php-mode . (lambda ()
+                        (yas-minor-mode 1)
+                        ()
+                        (set (make-local-variable 'compile-command)
+                             (let ((file (file-name-nondirectory buffer-file-name)))
+                               (concat "php -l " file)))))
+           ;; (php-mode . 'ees/find-local-tags-file) ;; buggy, messes with font-lock somehow
+)
+)
+
+(use-package php-auto-yasnippets
+  :ensure t
+  :after (yasnippet autocomplete php-mode)
+  :config (payas/ac-setup))
+
+(use-package flycheck
+  :ensure t
+  :hook (php-mode . (flycheck-mode t)))
 
 ;;; SQL Mode
 (setq sql-product 'mysql)
@@ -289,12 +336,6 @@ file in a parent directory and make it the buffer local
 ;; ;; Replace "sbcl" with the path to your implementation
 ;; (setq inferior-lisp-program "clozure-cl")
 
-;;: JS2 Mode by S. Yegge
-(autoload 'js2-mode "js2" nil t)
-(add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-;; js2-mode rebinds this to some debugging aid instead of mouse-set-point
-;; and thus C-s begins a region
-;;(define-key js2-mode-map [mouse-1] nil)
 
 
 ;;; RFCview
@@ -328,17 +369,6 @@ file in a parent directory and make it the buffer local
 
 ;;; Projekt Mode
 (require 'projekt)
-
-;;; magit
-(autoload 'magit-status "magit" "eMagic for git" t)
-(setq magit-last-seen-setup-instructions "1.4.0"
-      magit-auto-revert-mode nil
-      magit-push-always-verify nil
-      magit-diff-paint-whitespace t
-      magit-diff-refine-hunk t
-      magit-diff-highlight-trailing t
-      magit-diff-hide-trailing-cr-characters nil)
-(global-set-key (kbd "C-c m") 'magit-status)
 
 ;; smerge - merging conflicts made easy
 (autoload 'smerge-mode "smerge-mode" nil t)
