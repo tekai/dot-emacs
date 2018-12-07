@@ -329,15 +329,6 @@ file in a parent directory and make it the buffer local
     (org-sort-entries nil ?O))
   (org-overview))
 
-
-;;; Set up Slime
-;; (setq lisp-indent-function #'common-lisp-indent-function)
-;; (load (expand-file-name "~/quicklisp/slime-helper.el"))
-;; ;; Replace "sbcl" with the path to your implementation
-;; (setq inferior-lisp-program "clozure-cl")
-
-
-
 ;;; RFCview
 (add-to-list 'auto-mode-alist
              '("/\\(rfc\\|std\\)[0-9]+\\.txt\\'" . rfcview-mode))
