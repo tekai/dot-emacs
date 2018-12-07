@@ -51,6 +51,9 @@
 
 (setq mouse-yank-at-point t)
 
+
+(setq search-whitespace-regexp nil)
+
 ;; MUST BE BEFORE ANY REQUIRE ETC.
 ;; load the newer file of .el / .elc
 (setq load-prefer-newer t)
@@ -111,7 +114,7 @@
 (require 'font-lock)
 ;; (require 'lazy-lock)
 ;; (setq font-lock-support-mode '((php-mode . lazy-lock-mode) (t . jit-lock-mode)))
-(setq font-lock-support-mode '((t . jit-lock-mode)))
+(setq font-lock-support-mode 'jit-lock-mode)
 (global-font-lock-mode t)
 (setq font-lock-maximum-decoration t)
 
@@ -120,43 +123,10 @@
 (setq uniquify-buffer-name-style 'post-forward
       uniquify-separator ":")
 
-;;; Angry keywords faces
-;;FIXME
-(setq font-lock-fixme-face (make-face 'font-lock-fixme-face))
-(set-face-foreground 'font-lock-fixme-face "Red")
-(set-face-background 'font-lock-fixme-face "Yellow")
-(make-face-bold 'font-lock-fixme-face)
-(font-lock-add-keywords
-     'php-mode '(("\\<\\(FIXME\\)" 1 font-lock-fixme-face t)))
-(font-lock-add-keywords
-     'js2-mode '(("\\<\\(FIXME\\)" 1 font-lock-fixme-face t)))
-
-;; TODO faces
-(setq font-lock-todo-face (make-face 'font-lock-todo-face))
-(set-face-foreground 'font-lock-todo-face "Blue")
-(set-face-background 'font-lock-todo-face "Yellow")
-(make-face-bold 'font-lock-todo-face)
-(font-lock-add-keywords
-    'php-mode '(("\\<\\(TODO\\)" 1 font-lock-todo-face t)))
-(font-lock-add-keywords
-    'js2-mode '(("\\<\\(TODO\\)" 1 font-lock-todo-face t)))
-
-;; RED HACK
-(setq font-lock-hack-face (make-face 'font-lock-hack-face))
-(set-face-foreground 'font-lock-hack-face "White")
-(set-face-background 'font-lock-hack-face "Red")
-(make-face-bold 'font-lock-hack-face)
-(font-lock-add-keywords
-    'php-mode '(("\\<\\(HACK\\)" 1 font-lock-hack-face t)))
-(font-lock-add-keywords
-    'js2-mode '(("\\<\\(HACK\\)" 1 font-lock-hack-face t)))
-
 ;;; Set up load-path
-(add-to-list 'load-path "~/.emacs.d/libs")
-(add-to-list 'load-path "~/.emacs.d/libs/git-modes")
-(add-to-list 'load-path "~/.emacs.d/libs/magit")
-(add-to-list 'load-path "~/.emacs.d/libs/g-client")
-(add-to-list 'load-path "~/.emacs.d/libs/geben")
+(add-to-list 'load-path "~/.emacs.d/libs/")
+(let ((default-directory  "~/.emacs.d/libs/"))
+  (normal-top-level-add-subdirs-to-load-path))
 
 ;; Mac stuff
 (when (eq system-type 'darwin)
@@ -507,6 +477,7 @@ file in a parent directory and make it the buffer local
      (c-basic-indent . 2))))
  '(scroll-bar-mode (quote right))
  '(show-paren-mode t)
+ '(tramp-syntax (quote default) nil (tramp))
  '(twitter-username "tekai")
  '(w3m-no-proxy-domains (quote ("eeschner.local" "eeschner.office")))
  '(w3m-use-cookies t)
