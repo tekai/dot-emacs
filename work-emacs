@@ -275,6 +275,11 @@ file in a parent directory and make it the buffer local
   :after (yasnippet autocomplete php-mode)
   :config (payas/ac-setup))
 
+;;; PHP debugger
+(use-package geben
+  :ensure t
+  :config (setq geben-source-coding-system 'latin-9))
+
 (use-package flycheck
   :ensure t
   :hook (php-mode . (flycheck-mode t)))
@@ -364,10 +369,6 @@ file in a parent directory and make it the buffer local
 ;;; TeX
 (setq tex-run-command "xetex")
 (setq latex-run-command "xelatex")
-
-;;; PHP debugger
-(autoload 'geben "geben" "PHP Debugger on Emacs" t)
-(setq geben-source-coding-system 'latin-9)
 
 ;;; Projekt Mode
 (require 'projekt)
