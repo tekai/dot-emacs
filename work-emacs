@@ -280,9 +280,11 @@ file in a parent directory and make it the buffer local
   :ensure t
   :config (setq geben-source-coding-system 'latin-9))
 
+;;; Flycheck
 (use-package flycheck
   :ensure t
-  :hook (php-mode . (flycheck-mode t)))
+  :commands flycheck-mode
+  :hook (php-mode . flycheck-mode))
 
 ;;; SQL Mode
 (setq sql-product 'mysql)
