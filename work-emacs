@@ -242,6 +242,9 @@ file in a parent directory and make it the buffer local
 
 
 ;;; PHP
+(use-package phpunit
+  :ensure t)
+
 (use-package php-mode
     :ensure t
     :config (setq php-template-compatibility nil
@@ -255,11 +258,11 @@ file in a parent directory and make it the buffer local
            ("(" . 'insert-parentheses)
            ("C-c C-d" . 'php-search-documentation)
            ("<f10>" . 'php-debug-file)
-           ("<f11>" . 'php-check-syntax-and-goto-line)
-           ("C-c C-y" . 'yas/create-php-snippet))
+           ("C-c C-y" . 'yas/create-php-snippet)
+           ("C-c t t" . 'phpunit-current-test)
+           ("C-c t c" . 'phpunit-current-class))
     :hook ((php-mode . (lambda ()
                         (yas-minor-mode 1)
-                        ()
                         (set (make-local-variable 'compile-command)
                              (let ((file (file-name-nondirectory buffer-file-name)))
                                (concat "php -l " file)))))
