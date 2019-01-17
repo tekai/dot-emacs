@@ -234,8 +234,11 @@ file in a parent directory and make it the buffer local
                     magit-diff-paint-whitespace t
                     magit-diff-refine-hunk t
                     magit-diff-highlight-trailing t
-                    magit-diff-hide-trailing-cr-characters nil)
-              (global-set-key (kbd "C-c m") 'magit-status)))
+                    magit-diff-hide-trailing-cr-characters nil
+                    magit-log-arguments (quote ("-n256" "--graph" "--decorate"))
+                    magit-diff-options (quote ("--ignore-all-space"))
+                    magit-log-margin (quote (t "%Y-%m-%d %H:%M " magit-log-margin-width t 18)))
+              (global-set-key (kbd "C-x g") 'magit-status)))
 
 
 ;;; PHP
