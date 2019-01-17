@@ -487,6 +487,9 @@ file in a parent directory and make it the buffer local
  '(column-number-mode t)
  '(css-indent-level 2)
  '(css-indent-offset 2)
+ '(custom-safe-themes
+   (quote
+    ("26d49386a2036df7ccbe802a06a759031e4455f07bda559dcf221f53e8850e69" default)))
  '(delete-selection-mode nil)
  '(diff-switches (quote ("-u" "-w")))
  '(fill-column 72)
@@ -497,8 +500,9 @@ file in a parent directory and make it the buffer local
  '(js2-highlight-level 3)
  '(js2-use-font-lock-faces t)
  '(keyboard-coding-system (quote iso-8859-1))
- '(magit-diff-options (quote ("--ignore-all-space")))
- '(package-selected-packages (quote (phpunit ag)))
+ '(package-selected-packages
+   (quote
+    (geben flycheck-plantuml plantuml-mode yasnippet-snippets which-key markdown-mode php-auto-yasnippets yatemplate moe-theme php-mode flycheck flycheck-phpstan use-package powerline yasnippet auto-complete js2-mode docker-tramp magit phpunit ag)))
  '(safe-local-variable-values
    (quote
     ((org-confirm-babel-evaluate)
@@ -522,3 +526,4 @@ file in a parent directory and make it the buffer local
 (put 'scroll-left 'disabled nil)
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
+(put 'magit-diff-edit-hunk-commit 'disabled nil)
