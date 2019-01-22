@@ -207,7 +207,7 @@ file in a parent directory and make it the buffer local
 (use-package which-key
     :ensure t
     :defer t
-    :condif (which-key-mode 1))
+    :config (which-key-mode 1))
 
 (use-package js2-mode
     :ensure t)
@@ -248,7 +248,7 @@ file in a parent directory and make it the buffer local
 (use-package php-mode
     :ensure t
     ;; php-mode appends, this prepends to avoid conf-mode
-    :mode ("\\.php\\'" . php-mode)
+    :mode ("\\.php\\(\\.dist\\)?\\'" . php-mode)
     :config (setq php-template-compatibility nil
                   php-lineup-cascaded-calls nil
                   php-mode-warn-if-mumamo-off "Don't warn"
