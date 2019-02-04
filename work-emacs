@@ -60,8 +60,9 @@
 (setq load-prefer-newer t)
 
 (require 'cl)
-;; custom keybindings
 (require 'hippie-exp)
+;; custom keybindings
+(global-unset-key (kbd "C-x f"))
 (global-set-key [C-tab] 'other-window)
 (global-set-key [XF86Save] 'save-buffer)
 (global-set-key (kbd "C-x O") (lambda () (interactive) (other-window -1)))
