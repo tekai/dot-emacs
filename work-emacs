@@ -142,6 +142,7 @@
         mac-option-modifier nil))
 
 ;;: this function is buggy and doesn't work as a hook for php-mode
+;;; messes with font-lock somehow
 (defun ees/find-local-tags-file ()
   "When the current `tags-file-name' is nil or isn't in a parent
 directory of the current `buffer-file-name', locate a valid TAGS
@@ -266,11 +267,9 @@ file in a parent directory and make it the buffer local
            ("C-c t t" . 'phpunit-current-test)
            ("C-c t c" . 'phpunit-current-class))
     :hook ((php-mode . (lambda ()
-                        (yas-minor-mode 1)
-                        (set (make-local-variable 'compile-command)
-                             (let ((file (file-name-nondirectory buffer-file-name)))
-                               (concat "php -l " file)))))
-           ;; (php-mode . 'ees/find-local-tags-file) ;; buggy, messes with font-lock somehow
+                         (yas-minor-mode 1)
+                         (ees/find-local-tags-file)))
+           ;; (php-mode . 'ees/find-local-tags-file)
 )
 )
 
