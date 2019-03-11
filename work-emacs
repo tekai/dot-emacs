@@ -260,7 +260,8 @@ file in a parent directory and make it the buffer local
                   php-manual-url  'en
                   ;; php-mode-coding-style 'default
                   php-search-documentation-browser-function 'eww-browse-url)
-    :bind (("'" . 'insert-pair)
+    :bind (:map php-mode-map
+           ("'" . 'insert-pair)
            ("(" . 'insert-parentheses)
            ("C-c C-d" . 'php-search-documentation)
            ("<f10>" . 'php-debug-file)
