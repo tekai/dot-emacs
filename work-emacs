@@ -289,7 +289,10 @@ file in a parent directory and make it the buffer local
 (use-package flycheck
   :ensure t
   :commands flycheck-mode
-  :hook (php-mode . flycheck-mode))
+  :hook (php-mode . flycheck-mode)
+  :config (setq flycheck-php-phpmd-executable "~/.composer/vendor/bin/phpmd"
+                flycheck-php-phpcs-executable "~/.composer/vendor/bin/phpcs"
+                flycheck-phpcs-standard "PSR2"))
 
 ;;; SQL Mode
 (setq sql-product 'mysql)
