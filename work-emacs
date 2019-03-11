@@ -63,6 +63,8 @@
 (require 'hippie-exp)
 ;; custom keybindings
 (global-unset-key (kbd "C-x f"))
+(global-unset-key "\C-x\C-k") ; disable macro keymap
+;(global-set-key "\C-x\C-k" 'kill-buffer)
 (global-set-key [C-tab] 'other-window)
 (global-set-key [XF86Save] 'save-buffer)
 (global-set-key (kbd "C-x O") (lambda () (interactive) (other-window -1)))
