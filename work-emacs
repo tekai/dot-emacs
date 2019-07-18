@@ -231,21 +231,27 @@ file in a parent directory and make it the buffer local
     :ensure t)
 (use-package magit
     :ensure t
-    :config (setq magit-auto-revert-mode nil
-                  magit-revert-buffers nil
-                  magit-push-always-verify nil
-                  magit-last-seen-setup-instructions "1.4.0"
-                  magit-diff-paint-whitespace t
-                  magit-diff-refine-hunk t
-                  magit-diff-highlight-trailing t
-                  magit-diff-hide-trailing-cr-characters nil
-                  magit-log-arguments (quote ("-n256" "--graph" "--decorate"))
-                  magit-diff-options (quote ("--ignore-all-space"))
-                  magit-log-margin (quote (t "%Y-%m-%d %H:%M " magit-log-margin-width t 18))
-                  magit-section-initial-visibility-alist (quote ((stashes . hide) (status . show)))
-                  magit-status-initial-section (quote (((unpushed . "@{upstream}..") (status)) 1)))
-    :bind (("C-x g" . 'magit-status)))
+    :config (progn
+              (setq magit-revert-buffers nil
+                    magit-push-always-verify nil
+                    magit-last-seen-setup-instructions "1.4.0"
+                    magit-diff-paint-whitespace t
+                    magit-diff-refine-hunk t
+                    magit-diff-highlight-trailing t
+                    magit-diff-hide-trailing-cr-characters nil
+                    magit-log-arguments (quote ("-n256" "--graph" "--decorate"))
+                    magit-diff-options (quote ("--ignore-all-space"))
+                    magit-log-margin (quote (t "%Y-%m-%d %H:%M " magit-log-margin-width t 18))
+                    magit-section-initial-visibility-alist (quote ((stashes . hide) (status . show)))
+                    magit-status-initial-section (quote (((unpushed . "@{upstream}..") (status)) 1)))
+              (magit-auto-revert-mode nil))
+    :bind (("C-x g" . 'magit-status)
+           :map magit-mode-map
+           ("C-c t" . ees/magit-edit-note-at-point))
 
+(defun ees/magit-edit-note-at-point ()
+  (interactive)
+  (magit-notes-edit (magit-branch-or-commit-at-point)))
 
 ;;; PHP
 (use-package phpunit
@@ -272,10 +278,7 @@ file in a parent directory and make it the buffer local
            ("C-c t c" . 'phpunit-current-class))
     :hook ((php-mode . (lambda ()
                          (yas-minor-mode 1)
-                         (ees/find-local-tags-file)))
-           ;; (php-mode . 'ees/find-local-tags-file)
-)
-)
+                         (ees/find-local-tags-file)))))
 
 (use-package php-auto-yasnippets
   :ensure t
@@ -499,7 +502,7 @@ file in a parent directory and make it the buffer local
  '(css-indent-offset 2)
  '(custom-safe-themes
    (quote
-    ("26d49386a2036df7ccbe802a06a759031e4455f07bda559dcf221f53e8850e69" default)))
+    ("b9a06c75084a7744b8a38cb48bc987de10d68f0317697ccbd894b2d0aca06d2b" "26d49386a2036df7ccbe802a06a759031e4455f07bda559dcf221f53e8850e69" default)))
  '(delete-selection-mode nil)
  '(diff-switches (quote ("-u" "-w")))
  '(fill-column 72)
