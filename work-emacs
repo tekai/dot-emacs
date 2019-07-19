@@ -247,7 +247,7 @@ file in a parent directory and make it the buffer local
               (magit-auto-revert-mode nil))
     :bind (("C-x g" . 'magit-status)
            :map magit-mode-map
-           ("C-c t" . ees/magit-edit-note-at-point))
+           ("C-c t" . ees/magit-edit-note-at-point)))
 
 (defun ees/magit-edit-note-at-point ()
   (interactive)
