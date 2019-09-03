@@ -12,16 +12,21 @@
               scroll-preserve-screen-position nil
               cursor-in-non-selected-windows nil)
 
+; 💩 pile of happy poo
+; 💣 bomb emoji
+;  nerd font git branch
 (setq default-frame-alist '((font-backend . "xft")
                             ;; (font . "DejaVu Sans Mono-9")
-                            (font . "IBM Plex Mono-10")
                             ;; (font . "Inconsolata-11")
+                            (font . "IBM Plex Mono-10")
+                            ;; (font . "BlexMono Nerd Font Mono-10")
                             (vertical-scroll-bars . right)
                             (tool-bar-lines . 0)))
 
 ;; no toolbar, no menu for me
 (tool-bar-mode -1)
 (menu-bar-mode -1)
+(scroll-bar-mode 'right)
 
 ;; Set Zmacs mode (highlight marked text)
 (transient-mark-mode t)
@@ -47,13 +52,16 @@
 (setq history-length 1000)
 
 (prefer-coding-system 'utf-8)
+(delete-selection-mode t)
+(blink-cursor-mode nil)
 
-(setq save-interprogram-paste-before-kill t)
-
-(setq mouse-yank-at-point t)
-
-
-(setq search-whitespace-regexp nil)
+(setq save-interprogram-paste-before-kill t
+      mouse-yank-at-point t
+      inhibit-startup-screen nil
+      diff-switches '("-u" "-w")
+      ediff-merge-split-window-function 'split-window-vertically
+      fill-column 72
+      search-whitespace-regexp nil)
 
 ;; MUST BE BEFORE ANY REQUIRE ETC.
 ;; load the newer file of .el / .elc
@@ -467,7 +475,6 @@ file in a parent directory and make it the buffer local
   (interactive)
   (find-file "~/doc/jargon-1.5.0.dos.txt"))
 
-;; doesn't execute when loaded as daemon
 (defun explorer (alt)
   "Open file browser window at the buffers current directory."
   (interactive "P")
@@ -498,19 +505,11 @@ file in a parent directory and make it the buffer local
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(blink-cursor-mode nil)
- '(column-number-mode t)
  '(css-indent-level 2)
  '(css-indent-offset 2)
  '(custom-safe-themes
    (quote
     ("b9a06c75084a7744b8a38cb48bc987de10d68f0317697ccbd894b2d0aca06d2b" "26d49386a2036df7ccbe802a06a759031e4455f07bda559dcf221f53e8850e69" default)))
- '(delete-selection-mode nil)
- '(diff-switches (quote ("-u" "-w")))
- '(fill-column 72)
- '(grep-command "grep -nH -r -e ")
- '(grep-template "grep <C> -nH -r -e <R> <F>")
- '(inhibit-startup-screen nil)
  '(js2-allow-keywords-as-property-names nil)
  '(js2-highlight-level 3)
  '(js2-use-font-lock-faces t)
@@ -530,13 +529,7 @@ file in a parent directory and make it the buffer local
      (c-basic-indent . 4)
      (mule-coding . latin-9)
      (c-basic-indent . 2))))
- '(scroll-bar-mode (quote right))
- '(show-paren-mode t)
- '(tramp-syntax (quote default) nil (tramp))
- '(twitter-username "tekai")
- '(w3m-no-proxy-domains (quote ("eeschner.local" "eeschner.office")))
- '(w3m-use-cookies t)
- '(w3m-use-favicon nil))
+ '(tramp-syntax (quote default) nil (tramp)))
 
 (put 'narrow-to-region 'disabled nil)
 (put 'scroll-left 'disabled nil)
