@@ -476,8 +476,8 @@ file in a parent directory and make it the buffer local
       ('w32 (w32-shell-execute "open" "explorer" (concat "/e,/select," dir)))
       ('ns (shell-command (format "open %s" dir) nil))
       ('x (if alt
-              (dired)
-              (call-process "xterm" nil 0 nil))))))
+              (dired dir)
+              (call-process "x-terminal-emulator" nil 0 nil))))))
 
 ;(setq Info-dir-contents nil) ;; to reset & reread info dirs
 ;;; LOAD custom libraries
