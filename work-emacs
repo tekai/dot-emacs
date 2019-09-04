@@ -21,6 +21,7 @@
                             (font . "IBM Plex Mono-10")
                             ;; (font . "BlexMono Nerd Font Mono-10")
                             (vertical-scroll-bars . right)
+                            (scroll-bar-width . 12)
                             (tool-bar-lines . 0)))
 
 ;; no toolbar, no menu for me
