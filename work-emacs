@@ -60,7 +60,8 @@
       mouse-yank-at-point t
       inhibit-startup-screen nil
       diff-switches '("-u" "-w")
-      ediff-merge-split-window-function 'split-window-vertically
+      ediff-split-window-function 'split-window-horizontally
+      ediff-merge-split-window-function 'split-window-horizontally
       fill-column 72
       search-whitespace-regexp nil)
 
