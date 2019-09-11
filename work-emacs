@@ -277,7 +277,8 @@ file in a parent directory and make it the buffer local
                   php-search-url nil
                   php-manual-url  'en
                   ;; php-mode-coding-style 'default
-                  php-search-documentation-browser-function 'eww-browse-url)
+                  php-search-documentation-browser-function 'eww-browse-url
+                  php-mode-coding-style 'psr2) ;; what about psr12?
     :bind (:map php-mode-map
            ("'" . 'insert-pair)
            ("(" . 'insert-parentheses)
@@ -307,7 +308,7 @@ file in a parent directory and make it the buffer local
   :hook (php-mode . flycheck-mode)
   :config (setq flycheck-php-phpmd-executable "~/.composer/vendor/bin/phpmd"
                 flycheck-php-phpcs-executable "~/.composer/vendor/bin/phpcs"
-                flycheck-phpcs-standard "PSR2"))
+                flycheck-phpcs-standard "PSR12"))
 
 ;;; SQL Mode
 (setq sql-product 'mysql)
