@@ -56,7 +56,8 @@
 (delete-selection-mode -1)
 (blink-cursor-mode nil)
 
-(setq save-interprogram-paste-before-kill t
+(setq shift-select-mode nil
+      save-interprogram-paste-before-kill t
       mouse-yank-at-point t
       inhibit-startup-screen nil
       diff-switches '("-u" "-w")
@@ -64,6 +65,25 @@
       ediff-merge-split-window-function 'split-window-horizontally
       fill-column 72
       search-whitespace-regexp nil)
+
+(defun move-line-up ()
+  "Move up the current line."
+  (interactive)
+  (transpose-lines 1)
+  (forward-line -2)
+  (indent-according-to-mode))
+
+(defun move-line-down ()
+  "Move down the current line."
+  (interactive)
+  (forward-line 1)
+  (transpose-lines 1)
+  (forward-line -1)
+  (indent-according-to-mode))
+
+(global-set-key [(meta shift up)]  'move-line-up)
+(global-set-key [(meta shift down)]  'move-line-down)
+
 
 ;; MUST BE BEFORE ANY REQUIRE ETC.
 ;; load the newer file of .el / .elc
