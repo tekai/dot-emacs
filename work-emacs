@@ -274,7 +274,9 @@ file in a parent directory and make it the buffer local
                     magit-log-margin (quote (t "%Y-%m-%d %H:%M " magit-log-margin-width t 18))
                     magit-section-initial-visibility-alist (quote ((stashes . hide) (status . show)))
                     magit-status-initial-section (quote (((unpushed . "@{upstream}..") (status)) 1)))
-              (magit-auto-revert-mode nil))
+              (magit-auto-revert-mode nil)
+              (require 'magit-extras)
+              (put 'magit-diff-edit-hunk-commit 'disabled nil))
     :bind (("C-x g" . 'magit-status)
            :map magit-mode-map
            ("C-c t" . ees/magit-edit-note-at-point)))
@@ -282,6 +284,9 @@ file in a parent directory and make it the buffer local
 (defun ees/magit-edit-note-at-point ()
   (interactive)
   (magit-notes-edit (magit-branch-or-commit-at-point)))
+
+;; (use-package forge
+;;   :after magit)
 
 ;;; PHP
 (use-package phpunit
@@ -317,18 +322,35 @@ file in a parent directory and make it the buffer local
   :config (payas/ac-setup))
 
 ;;; PHP debugger
-(use-package geben
-  :ensure t
-  :config (setq geben-source-coding-system 'latin-9))
+;; (use-package geben
+;;   :ensure t
+;;   :config (setq geben-source-coding-system 'latin-9))
 
 ;;; Flycheck
+(defun ees/ignore-flycheck-risky (orig-fun sym &optional _ignored)
+  "Ignore that setting flycheck-php-executable locally is risky"
+  (if (eq sym 'flycheck-php-executable)
+      nil
+    (apply orig-fun (list sym _ignored))))
 (use-package flycheck
   :ensure t
   :commands flycheck-mode
   :hook (php-mode . flycheck-mode)
-  :config (setq flycheck-php-phpmd-executable "~/.composer/vendor/bin/phpmd"
-                flycheck-php-phpcs-executable "~/.composer/vendor/bin/phpcs"
-                flycheck-phpcs-standard "PSR12"))
+  :config (progn
+            (setq flycheck-php-phpmd-executable "~/.composer/vendor/bin/phpmd"
+                  flycheck-php-phpcs-executable "~/.composer/vendor/bin/phpcs"
+                  flycheck-phpcs-standard "PSR12")
+            ;; not necessary when var & val are added to safe-local-variable-values
+            ;(advice-add 'risky-local-variable-p :around #'ees/ignore-flycheck-risky)
+            ))
+
+(use-package dired-git-info
+  :ensure t
+  :bind (:map dired-mode-map (")" . dired-git-info-mode)))
+
+(use-package diredfl
+  :ensure t
+  :config (diredfl-global-mode))
 
 ;;; SQL Mode
 (setq sql-product 'mysql)
@@ -540,10 +562,12 @@ file in a parent directory and make it the buffer local
  '(magit-status-initial-section (quote (2)))
  '(package-selected-packages
    (quote
-    (geben flycheck-plantuml plantuml-mode yasnippet-snippets which-key markdown-mode php-auto-yasnippets yatemplate moe-theme php-mode flycheck flycheck-phpstan use-package powerline yasnippet auto-complete js2-mode docker-tramp magit phpunit ag)))
+    (forge composer php-runtime company-phpactor transient magit-extras diredfl dired-git-info geben flycheck-plantuml plantuml-mode yasnippet-snippets which-key markdown-mode php-auto-yasnippets yatemplate moe-theme php-mode flycheck flycheck-phpstan use-package powerline yasnippet auto-complete js2-mode docker-tramp magit phpunit ag)))
  '(safe-local-variable-values
    (quote
-    ((org-confirm-babel-evaluate)
+    ((flycheck-php-executable . "php-dev_suite_1")
+     (flycheck-php-executable . "php-localhost")
+     (org-confirm-babel-evaluate)
      (buffer-file-coding-system . latin-9)
      (Syntax . COMMON-LISP)
      (Package . CL-USER)
@@ -558,4 +582,3 @@ file in a parent directory and make it the buffer local
 (put 'scroll-left 'disabled nil)
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
-(put 'magit-diff-edit-hunk-commit 'disabled nil)
