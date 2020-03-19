@@ -352,6 +352,10 @@ file in a parent directory and make it the buffer local
   :ensure t
   :config (diredfl-global-mode))
 
+;; Docker stuff
+(use-package docke-tramp)
+(use-package dockerfile-mode)
+
 ;;; SQL Mode
 (setq sql-product 'mysql)
 (add-hook 'sql-mode-hook
@@ -562,7 +566,7 @@ file in a parent directory and make it the buffer local
  '(magit-status-initial-section (quote (2)))
  '(package-selected-packages
    (quote
-    (forge composer php-runtime company-phpactor transient magit-extras diredfl dired-git-info geben flycheck-plantuml plantuml-mode yasnippet-snippets which-key markdown-mode php-auto-yasnippets yatemplate moe-theme php-mode flycheck flycheck-phpstan use-package powerline yasnippet auto-complete js2-mode docker-tramp magit phpunit ag)))
+    (dockerfile-mode forge composer php-runtime company-phpactor transient magit-extras diredfl dired-git-info geben flycheck-plantuml plantuml-mode yasnippet-snippets which-key markdown-mode php-auto-yasnippets yatemplate moe-theme php-mode flycheck flycheck-phpstan use-package powerline yasnippet auto-complete js2-mode docker-tramp magit phpunit ag)))
  '(safe-local-variable-values
    (quote
     ((flycheck-php-executable . "php-dev_suite_1")
